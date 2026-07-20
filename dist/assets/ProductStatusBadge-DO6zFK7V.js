@@ -1,0 +1,1 @@
+import{n as e,o as t,t as n}from"./jsx-runtime-B7GUpQBw.js";import{t as r}from"./StatusBadge-DfsT_O4i.js";var i=t(e(),1),a=n(),o={active:`active`,draft:`inactive`,archived:`warning`};function s({status:e}){let t=e?e.charAt(0).toUpperCase()+e.slice(1):`Draft`;return(0,a.jsx)(r,{tone:o[e]||`inactive`,children:t})}s.propTypes={status:i.default.string};export{s as t};

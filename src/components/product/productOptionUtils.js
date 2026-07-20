@@ -1,0 +1,18 @@
+export {
+  fallbackProductImage,
+  getColourVariant,
+  getColourVariants,
+  getColourVariantStock,
+  getFirstAvailableColourVariant,
+  getProductImages,
+  getPrimaryVariantImage,
+  getProductColours,
+  getProductSizes,
+  getProductStock,
+  getVariant,
+  getVariantStock,
+  handleProductImageError,
+  isColourAvailable,
+  isSizeAvailable,
+  productColourMap,
+} from '../../utils/productVariants.js';
