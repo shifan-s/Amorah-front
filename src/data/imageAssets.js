@@ -1,4 +1,4 @@
-import heroImage from '../assets/images/hero.jpeg';
+import heroImage from '../assets/images/hero-amo.png';
 
 export const imageAssets = {
   productImages: {
