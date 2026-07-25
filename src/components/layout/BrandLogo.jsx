@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import amorahLogo from '../../assets/images/amorah-logo-transparent.png';
+import amorahLogo from '../../assets/images/amorah-logo-2nd.jpg';
 
 const sizes = {
   sm: 'w-28 sm:w-32',
