@@ -65,8 +65,8 @@ function HomePage() {
   return (
     <>
       <Seo
-        title="Amorah by N-ZAN Designs | Premium Women's Clothing"
-        description="Discover premium women's clothing from Amorah by N-ZAN Designs: dresses, co-ord sets, kurtis, ethnic wear and new arrivals."
+        title="Amorah | Premium Women's Clothing"
+        description="Discover premium women's clothing from Amorah : dresses, co-ord sets, kurtis, ethnic wear and new arrivals."
         path="/"
         breadcrumbs={[{ name: 'Home', path: '/' }]}
       />

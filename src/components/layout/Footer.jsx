@@ -230,7 +230,7 @@ function Footer() {
       <div className="bg-amorah-maroon px-4 py-5 text-amorah-white sm:px-6 lg:px-10 xl:px-14">
         <div className="mx-auto flex max-w-[1500px] flex-col gap-4 text-xs sm:flex-row sm:items-center sm:justify-between">
           <p className="leading-6 text-amorah-white/80">
-            © {currentYear} Amorah by N-ZAN Designs. All rights reserved.
+            © {currentYear} Amorah. All rights reserved.
           </p>
 
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-amorah-white/80">

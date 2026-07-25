@@ -40,10 +40,11 @@ function AdminLoginPage() {
       navigate(location.state?.from || '/admin', { replace: true });
     } catch (error) {
       if (error.status === 403) {
+        toast.error('You do not have administrator access.');
         navigate('/admin/forbidden', { replace: true });
         return;
       }
-      toast.error('Unable to login with those credentials.');
+      toast.error(error.message || 'Unable to login as admin.');
     } finally {
       setSaving(false);
     }

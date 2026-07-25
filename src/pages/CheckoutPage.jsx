@@ -477,7 +477,7 @@ function CheckoutPage() {
   return (
     <>
       <Seo
-        title="Checkout | Amorah by N-ZAN Designs"
+        title="Checkout | Amorah N-ZAN Designs"
         description="Complete your Amorah checkout with saved addresses and a backend-validated Razorpay preview."
         path="/checkout"
         breadcrumbs={[

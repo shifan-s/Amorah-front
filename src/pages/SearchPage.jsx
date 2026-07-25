@@ -153,7 +153,7 @@ function SearchPage() {
   return (
     <>
       <Seo
-        title={query ? `Search results for ${query} | Amorah by N-ZAN Designs` : 'Search | Amorah by N-ZAN Designs'}
+        title={query ? `Search results for ${query} | Amorah N-ZAN Designs` : 'Search | Amorah N-ZAN Designs'}
         description="Search Amorah product names, product types, styles, fabrics, occasions and tags."
         path={query ? `/search?q=${encodeURIComponent(query)}` : '/search'}
         breadcrumbs={[

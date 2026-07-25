@@ -9,7 +9,7 @@ function ProfilePage() {
   return (
     <>
       <Seo
-        title="Profile | Amorah by N-ZAN Designs"
+        title="Profile | Amorah N-ZAN Designs"
         description="Manage Amorah profile details including name, email and mobile number."
         path="/account/profile"
         breadcrumbs={[

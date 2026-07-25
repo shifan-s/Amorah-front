@@ -38,7 +38,7 @@ function OrdersPage() {
   return (
     <>
       <Seo
-        title="Orders | Amorah by N-ZAN Designs"
+        title="Orders | Amorah N-ZAN Designs"
         description="Review your Amorah order history and current order statuses."
         path="/account/orders"
         breadcrumbs={[

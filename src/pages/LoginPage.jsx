@@ -61,7 +61,7 @@ function LoginPage() {
   return (
     <>
       <Seo
-        title="Login | Amorah by N-ZAN Designs"
+        title="Login | Amorah "
         description="Login to your Amorah account to view orders, profile details, saved addresses and wishlist pieces."
         path="/login"
         breadcrumbs={[

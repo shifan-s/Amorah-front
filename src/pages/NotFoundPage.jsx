@@ -10,7 +10,7 @@ function NotFoundPage() {
   return (
     <>
       <Seo
-        title="404 Page Not Found | Amorah by N-ZAN Designs"
+        title="404 Page Not Found | Amorah N-ZAN Designs"
         description="The requested Amorah page could not be found. Return home or shop premium women's clothing."
         path="/404"
         breadcrumbs={[

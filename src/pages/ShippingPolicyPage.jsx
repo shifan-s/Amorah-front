@@ -32,7 +32,7 @@ function ShippingPolicyPage() {
   return (
     <>
       <Seo
-        title="Shipping Policy | Amorah by N-ZAN Designs"
+        title="Shipping Policy | Amorah N-ZAN Designs"
         description="Review Amorah shipping coverage, processing, delivery timelines and checkout-calculated charges."
         path="/shipping-policy"
         breadcrumbs={[

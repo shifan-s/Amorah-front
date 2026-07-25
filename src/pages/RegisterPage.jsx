@@ -70,7 +70,7 @@ function RegisterPage() {
   return (
     <>
       <Seo
-        title="Register | Amorah by N-ZAN Designs"
+        title="Register | Amorah N-ZAN Designs"
         description="Create an Amorah customer account for profile, order, address and wishlist experiences."
         path="/register"
         breadcrumbs={[

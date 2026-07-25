@@ -13,11 +13,11 @@ function BrandLogo({ size = 'md', className = '' }) {
     <Link
       to="/"
       className={`amorah-focus inline-flex items-center justify-center ${className}`}
-      aria-label="Amorah by N-ZAN Designs home"
+      aria-label="Amorah home"
     >
       <img
         src={amorahLogo}
-        alt="Amorah by N-ZAN Designs"
+        alt="Amorah "
         className={`${sizes[size]} h-auto max-h-16 object-contain`}
       />
     </Link>

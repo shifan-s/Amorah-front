@@ -69,7 +69,7 @@ function CartPage() {
   return (
     <>
       <Seo
-        title="Cart | Amorah by N-ZAN Designs"
+        title="Cart | Amorah "
         description="Review your Amorah shopping bag, edit quantities and proceed to secure checkout."
         path="/cart"
         breadcrumbs={[

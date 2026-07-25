@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import amorahLogo from '../../assets/images/amorah-logo.jpg';
 import { getProductStock } from '../../utils/productVariants.js';
 
-const siteName = 'Amorah by N-ZAN Designs';
+const siteName = 'Amorah N-ZAN Designs';
 const siteUrl = (import.meta.env.VITE_PUBLIC_SITE_URL || '').replace(/\/$/, '');
 
 function absoluteUrl(path = '/') {

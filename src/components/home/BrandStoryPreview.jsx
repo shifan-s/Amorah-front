@@ -16,7 +16,7 @@ function BrandStoryPreview({ image }) {
               Clothing That Feels Like You
             </h2>
             <p className="mt-5 text-base leading-8 text-amorah-brown">
-              Amorah by N-ZAN Designs creates feminine cotton and ethnic wear that balances tradition, comfort and
+              Amorah creates feminine cotton and ethnic wear that balances tradition, comfort and
               contemporary style. Each collection is designed to feel personal, wearable and beautifully considered.
             </p>
             <Link

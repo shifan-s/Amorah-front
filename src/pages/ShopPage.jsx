@@ -307,7 +307,7 @@ function ShopPage() {
   return (
     <>
       <Seo
-        title={`${pageTitle} | Amorah by N-ZAN Designs`}
+        title={`${pageTitle} | Amorah N-ZAN Designs`}
         description={pageDescription}
         path={categorySlug ? `/shop/${categorySlug}` : '/shop'}
         image={activeCategory?.image?.url}

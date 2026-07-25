@@ -49,7 +49,7 @@ const aboutImages = {
   },
   story: {
     src: ourStoryImage,
-    alt: 'Tailored white suit campaign for Amorah by N-ZAN Designs',
+    alt: 'Tailored white suit campaign for Amorah N-ZAN Designs',
     position: 'object-[center_45%]',
   },
   brandIcon: {
@@ -80,8 +80,8 @@ function AboutPage() {
   return (
     <>
       <Seo
-        title="About Amorah | Amorah by N-ZAN Designs"
-        description="Learn the story, philosophy, craftsmanship and quality promise behind Amorah by N-ZAN Designs."
+        title="About Amorah | Amorah"
+        description="Learn the story, philosophy, craftsmanship and quality promise behind Amorah ."
         path="/about"
         breadcrumbs={[
           { name: 'Home', path: '/' },
@@ -94,7 +94,7 @@ function AboutPage() {
           <Container className="grid min-h-[32rem] items-stretch gap-8 py-8 sm:py-12 lg:min-h-[40rem] lg:grid-cols-[0.82fr_1fr] lg:gap-14 lg:py-0">
             <div className="max-w-[42rem] pt-8 pb-4 sm:pt-10 lg:pt-24 lg:pb-16">
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-amorah-maroon">
-                Amorah by N-ZAN Designs
+                Amorah 
               </p>
               <h1 className="mt-5 max-w-[16ch] font-heading text-[clamp(2.35rem,5vw,4.6rem)] font-semibold leading-[1.02] text-amorah-maroon sm:max-w-[17ch] lg:max-w-[16ch]">
                 Designed for the Modern Woman.

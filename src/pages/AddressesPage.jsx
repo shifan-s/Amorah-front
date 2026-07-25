@@ -83,7 +83,7 @@ function AddressesPage() {
   return (
     <>
       <Seo
-        title="Addresses | Amorah by N-ZAN Designs"
+        title="Addresses | Amorah N-ZAN Designs"
         description="Manage Amorah saved addresses for checkout and account use."
         path="/account/addresses"
         breadcrumbs={[

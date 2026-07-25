@@ -32,7 +32,7 @@ function PrivacyPolicyPage() {
   return (
     <>
       <Seo
-        title="Privacy Policy | Amorah by N-ZAN Designs"
+        title="Privacy Policy | Amorah N-ZAN Designs"
         description="Read Amorah privacy policy content covering data collection, payments, cookies and customer rights."
         path="/privacy-policy"
         breadcrumbs={[

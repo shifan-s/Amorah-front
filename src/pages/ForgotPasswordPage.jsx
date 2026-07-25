@@ -20,7 +20,7 @@ function ForgotPasswordPage() {
   return (
     <>
       <Seo
-        title="Forgot Password | Amorah by N-ZAN Designs"
+        title="Forgot Password | Amorah "
         description="Get account access help for an Amorah customer account."
         path="/forgot-password"
         breadcrumbs={[

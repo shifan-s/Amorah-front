@@ -1,70 +1,52 @@
 import PropTypes from 'prop-types';
-import { createContext, createElement, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { getAdminMe, loginAdmin, logoutAdmin } from '../services/adminAuthService.js';
+import { createContext, createElement, useCallback, useContext, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearAuthUser, selectAuth, setAuthStatus, setAuthUser } from '../../store/slices/authSlice.js';
+import { loginAdmin, logoutAdmin } from '../services/adminAuthService.js';
 
 const AdminAuthContext = createContext(null);
 
 export function AdminAuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [status, setStatus] = useState('loading');
-  const [error, setError] = useState('');
-
-  const refreshAdmin = useCallback(async () => {
-    setStatus('loading');
-    setError('');
-
-    try {
-      const adminUser = await getAdminMe();
-      setUser(adminUser);
-      setStatus('authenticated');
-      return adminUser;
-    } catch (requestError) {
-      setUser(null);
-      setStatus(requestError.status === 403 ? 'forbidden' : 'unauthenticated');
-      setError(requestError.message || 'Unable to verify admin access.');
-      return null;
-    }
-  }, []);
-
-  useEffect(() => {
-    refreshAdmin();
-  }, [refreshAdmin]);
+  const dispatch = useDispatch();
+  const auth = useSelector(selectAuth);
 
   const signIn = useCallback(async (credentials) => {
-    setStatus('loading');
-    setError('');
+    dispatch(setAuthStatus('loading'));
 
     try {
       const adminUser = await loginAdmin(credentials);
-      setUser(adminUser);
-      setStatus('authenticated');
+      dispatch(setAuthUser(adminUser));
       return adminUser;
     } catch (requestError) {
-      setUser(null);
-      setStatus(requestError.status === 403 ? 'forbidden' : 'unauthenticated');
-      setError(requestError.message || 'Unable to login as admin.');
+      dispatch(clearAuthUser());
       throw requestError;
     }
-  }, []);
+  }, [dispatch]);
 
   const signOut = useCallback(async () => {
     await logoutAdmin();
-    setUser(null);
-    setStatus('unauthenticated');
-  }, []);
+    dispatch(clearAuthUser());
+  }, [dispatch]);
+
+  const status =
+    auth.status === 'idle' || auth.status === 'loading'
+      ? 'loading'
+      : auth.isAuthenticated && auth.user?.role !== 'admin'
+        ? 'forbidden'
+        : auth.isAuthenticated
+          ? 'authenticated'
+          : 'unauthenticated';
 
   const value = useMemo(
     () => ({
-      user,
+      user: auth.user,
       status,
-      error,
       isLoading: status === 'loading',
-      isAdmin: user?.role === 'admin',
+      isAdmin: auth.user?.role === 'admin',
       signIn,
       signOut,
-      refreshAdmin,
     }),
-    [error, refreshAdmin, signIn, signOut, status, user],
+    [auth.user, signIn, signOut, status],
   );
 
   return createElement(AdminAuthContext.Provider, { value }, children);

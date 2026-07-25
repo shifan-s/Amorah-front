@@ -39,7 +39,7 @@ function AccountWishlistPage() {
   return (
     <>
       <Seo
-        title="Account Wishlist | Amorah by N-ZAN Designs"
+        title="Account Wishlist | Amorah N-ZAN Designs"
         description="View saved Amorah pieces from your customer account wishlist."
         path="/account/wishlist"
         breadcrumbs={[

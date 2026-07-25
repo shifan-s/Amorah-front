@@ -100,10 +100,10 @@ function App() {
   return (
     <>
       <Helmet>
-        <title>Amorah by N-ZAN Designs</title>
+        <title>Amorah </title>
         <meta
           name="description"
-          content="Amorah by N-ZAN Designs, a premium women's clothing e-commerce experience."
+          content="Amorah  a premium women's clothing e-commerce experience."
         />
       </Helmet>
       <SkipLink />

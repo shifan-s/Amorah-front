@@ -43,7 +43,7 @@ function AccountDashboardPage() {
   return (
     <>
       <Seo
-        title="Account Dashboard | Amorah by N-ZAN Designs"
+        title="Account Dashboard | Amorah"
         description="View your Amorah account overview, recent orders, wishlist count and default address."
         path="/account"
         breadcrumbs={[

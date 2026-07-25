@@ -1,5 +1,7 @@
 import api, { normalizeApiError, unwrapData } from './api.js';
 
+let currentCustomerRequest = null;
+
 export async function loginCustomer(payload) {
   try {
     const response = await api.post('/auth/login', payload);
@@ -19,12 +21,19 @@ export async function registerCustomer(payload) {
 }
 
 export async function getCurrentCustomer() {
-  try {
-    const response = await api.get('/auth/me');
-    return unwrapData(response)?.user;
-  } catch (error) {
-    throw normalizeApiError(error, 'Unable to restore session');
+  if (!currentCustomerRequest) {
+    currentCustomerRequest = api
+      .get('/auth/me')
+      .then((response) => unwrapData(response)?.user)
+      .catch((error) => {
+        throw normalizeApiError(error, 'Unable to restore session');
+      })
+      .finally(() => {
+        currentCustomerRequest = null;
+      });
   }
+
+  return currentCustomerRequest;
 }
 
 export async function logoutCustomer() {

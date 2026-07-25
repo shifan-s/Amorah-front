@@ -32,7 +32,7 @@ function ReturnPolicyPage() {
   return (
     <>
       <Seo
-        title="Return Policy | Amorah by N-ZAN Designs"
+        title="Return Policy | Amorah N-ZAN Designs"
         description="Read Amorah return, refund and exchange guidance for customer orders."
         path="/return-policy"
         breadcrumbs={[

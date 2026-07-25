@@ -24,7 +24,7 @@ const terms = [
   },
   {
     title: 'Intellectual property',
-    copy: 'Brand assets, product photography, copy, designs and storefront content belong to Amorah by N-ZAN Designs or their respective rights holders.',
+    copy: 'Brand assets, product photography, copy, designs and storefront content belong to Amorah N-ZAN Designs or their respective rights holders.',
   },
   {
     title: 'Limitation of liability',
@@ -36,7 +36,7 @@ function TermsPage() {
   return (
     <>
       <Seo
-        title="Terms and Conditions | Amorah by N-ZAN Designs"
+        title="Terms and Conditions | Amorah N-ZAN Designs"
         description="Review Amorah terms and conditions for website use, products, orders, payments and intellectual property."
         path="/terms-and-conditions"
         breadcrumbs={[

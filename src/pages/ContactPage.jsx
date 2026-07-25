@@ -14,7 +14,7 @@ import {
 import toast from 'react-hot-toast';
 import Container from '../components/common/Container.jsx';
 import Seo from '../components/common/Seo.jsx';
-import { imageAssets } from '../data/imageAssets.js';
+import contactAmorahImage from '../assets/images/contactamo.jpeg';
 
 const initialForm = {
   name: '',
@@ -45,13 +45,13 @@ const fieldBaseClasses =
   'mt-2 block w-full border bg-amorah-ivory/60 px-4 text-sm text-amorah-black outline-none transition duration-200 placeholder:text-amorah-muted hover:border-amorah-brown/40 focus:border-amorah-maroon focus:bg-amorah-white focus:ring-2 focus:ring-amorah-maroon/10';
 
 function getInputClasses(hasError) {
-  return `${fieldBaseClasses} h-12 ${
+  return `${fieldBaseClasses} h-11 sm:h-12 ${
     hasError ? 'border-amorah-error focus:border-amorah-error focus:ring-amorah-error/10' : 'border-amorah-border'
   }`;
 }
 
 function getTextareaClasses(hasError) {
-  return `${fieldBaseClasses} min-h-40 resize-y py-4 ${
+  return `${fieldBaseClasses} min-h-28 resize-y py-3 sm:min-h-32 sm:py-4 ${
     hasError ? 'border-amorah-error focus:border-amorah-error focus:ring-amorah-error/10' : 'border-amorah-border'
   }`;
 }
@@ -107,8 +107,8 @@ function ContactDetail({ icon, label, value, fallback, href }) {
   );
 
   return (
-    <article className="group flex gap-4 border-b border-amorah-border/80 py-5 last:border-b-0">
-      <span className="grid h-11 w-11 shrink-0 place-items-center border border-amorah-border bg-amorah-ivory text-lg text-amorah-maroon transition group-hover:border-amorah-maroon/40 group-hover:bg-amorah-light">
+    <article className="group flex gap-3 border-b border-amorah-border/80 py-3.5 last:border-b-0 sm:gap-4 sm:py-4">
+      <span className="grid h-9 w-9 shrink-0 place-items-center border border-amorah-border bg-amorah-ivory text-base text-amorah-maroon transition group-hover:border-amorah-maroon/40 group-hover:bg-amorah-light sm:h-10 sm:w-10 sm:text-lg">
         {icon}
       </span>
 
@@ -124,8 +124,9 @@ function SocialLink({ href, label, icon }) {
   if (!href) {
     return (
       <span
-        className="grid h-11 w-11 place-items-center border border-amorah-border text-amorah-muted opacity-50"
+        className="grid h-11 w-11 shrink-0 place-items-center border border-amorah-maroon/25 bg-amorah-ivory text-lg text-amorah-maroon"
         aria-label={`${label} link coming soon`}
+        aria-disabled="true"
         title={`${label} link coming soon`}
       >
         {icon}
@@ -136,7 +137,7 @@ function SocialLink({ href, label, icon }) {
   return (
     <a
       href={href}
-      className="amorah-focus grid h-11 w-11 place-items-center border border-amorah-border text-amorah-maroon transition duration-200 hover:border-amorah-maroon hover:bg-amorah-maroon hover:text-amorah-white"
+      className="amorah-focus grid h-11 w-11 shrink-0 place-items-center border border-amorah-maroon/30 bg-amorah-white text-lg text-amorah-maroon transition duration-200 hover:border-amorah-maroon hover:bg-amorah-maroon hover:text-amorah-white"
       target="_blank"
       rel="noopener noreferrer"
       aria-label={label}
@@ -148,10 +149,10 @@ function SocialLink({ href, label, icon }) {
 
 function EnquiryType({ icon, title, description }) {
   return (
-    <article className="border border-amorah-border bg-amorah-white p-5 transition duration-200 hover:-translate-y-0.5 hover:border-amorah-maroon/30 hover:shadow-[0_18px_45px_rgba(75,34,34,0.07)]">
-      <span className="grid h-10 w-10 place-items-center bg-amorah-light text-lg text-amorah-maroon">{icon}</span>
-      <h3 className="mt-4 font-heading text-xl font-semibold text-amorah-maroon">{title}</h3>
-      <p className="mt-2 text-sm leading-6 text-amorah-brown">{description}</p>
+    <article className="flex min-h-full flex-col items-center border border-amorah-border bg-amorah-white p-3 text-center transition duration-200 hover:-translate-y-0.5 hover:border-amorah-maroon/30 hover:shadow-[0_18px_45px_rgba(75,34,34,0.07)] sm:p-4 lg:items-start lg:text-left">
+      <span className="grid h-9 w-9 place-items-center bg-amorah-light text-base text-amorah-maroon sm:h-10 sm:w-10 sm:text-lg">{icon}</span>
+      <h3 className="mt-2 font-heading text-sm font-semibold leading-tight text-amorah-maroon sm:text-base lg:mt-3 lg:text-lg">{title}</h3>
+      <p className="mt-1 hidden text-xs leading-5 text-amorah-brown lg:block">{description}</p>
     </article>
   );
 }
@@ -228,9 +229,7 @@ function ContactPage() {
     setIsSubmitting(true);
 
     try {
-      // Replace this section with your backend API request later.
-      // Example:
-      // await api.post('/contact', form);
+  
 
       toast.success('Thank you. Your enquiry is ready to be connected to the backend.');
       setForm(initialForm);
@@ -245,8 +244,8 @@ function ContactPage() {
   return (
     <>
       <Seo
-        title="Contact | Amorah by N-ZAN Designs"
-        description="Contact Amorah by N-ZAN Designs for order support, sizing guidance, styling questions and collaborations."
+        title="Contact | Amorah"
+        description="Contact Amorah N-ZAN Designs for order support, sizing guidance, styling questions and collaborations."
         path="/contact"
         breadcrumbs={[
           { name: 'Home', path: '/' },
@@ -255,17 +254,17 @@ function ContactPage() {
       />
 
       <main className="bg-amorah-ivory text-amorah-black">
-        <section className="border-b border-amorah-border bg-amorah-light/70 py-12 sm:py-16 lg:py-20">
+        <section className="border-b border-amorah-border bg-amorah-light/70 py-8 sm:py-10 lg:py-12">
           <Container size="lg">
-            <div className="grid items-end gap-8 lg:grid-cols-[1fr_auto] lg:gap-14">
+            <div className="grid items-end gap-4 lg:grid-cols-[1fr_0.55fr] lg:gap-10">
               <div className="max-w-4xl">
                 <p className="text-xs font-semibold uppercase tracking-[0.28em] text-amorah-terracotta">Contact Amorah</p>
-                <h1 className="mt-4 max-w-3xl font-heading text-4xl font-semibold leading-[1.06] text-amorah-maroon sm:text-5xl lg:text-6xl">
+                <h1 className="mt-3 max-w-3xl font-heading text-3xl font-semibold leading-[1.08] text-amorah-maroon sm:text-4xl lg:text-5xl">
                   Personal help, thoughtful answers and effortless support.
                 </h1>
               </div>
 
-              <p className="max-w-md text-sm leading-7 text-amorah-brown sm:text-base">
+              <p className="max-w-md text-sm leading-6 text-amorah-brown sm:text-base sm:leading-7">
                 Whether you need sizing advice, order support or help choosing the right piece, our team is here to make
                 your Amorah experience simple and personal.
               </p>
@@ -273,26 +272,22 @@ function ContactPage() {
           </Container>
         </section>
 
-        <section className="py-10 sm:py-14 lg:py-20">
+        <section className="py-6 sm:py-8 lg:py-12">
           <Container size="lg">
-            <div className="grid items-start gap-8 lg:grid-cols-[0.86fr_1.14fr] lg:gap-10 xl:gap-14">
-              <aside className="lg:sticky lg:top-24">
+            <div className="grid items-start gap-6 lg:grid-cols-[0.82fr_1.18fr] lg:gap-8 xl:gap-10">
+              <aside className="lg:sticky lg:top-20">
                 <div className="overflow-hidden border border-amorah-border bg-amorah-white">
-                  <div className="relative overflow-hidden bg-amorah-light">
+                  <div className="relative aspect-[4/5] w-full overflow-hidden bg-amorah-light">
                     <img
-                      src={imageAssets.pageHeaders.contact.src}
-                      alt={imageAssets.pageHeaders.contact.alt}
-                      className="aspect-[5/4] w-full object-cover object-center transition duration-700 hover:scale-[1.02]"
+                      src={contactAmorahImage}
+                      alt="Amorah contact and customer support"
+                      className="h-full w-full object-cover object-center transition duration-700 hover:scale-[1.01]"
                       loading="eager"
+                      decoding="async"
                     />
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-amorah-black/55 to-transparent px-5 pb-5 pt-16 sm:px-7 sm:pb-7">
-                      <p className="max-w-sm font-heading text-2xl font-semibold leading-tight text-amorah-white sm:text-3xl">
-                        We are happy to help you find exactly what feels right.
-                      </p>
-                    </div>
                   </div>
 
-                  <div className="p-5 sm:p-7">
+                  <div className="p-4 sm:p-5">
                     <div className="border-y border-amorah-border">
                       <ContactDetail
                         icon={<FiMapPin aria-hidden="true" />}
@@ -322,15 +317,15 @@ function ContactPage() {
                       />
                     </div>
 
-                    <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                      <div>
+                    <div className="mt-4 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+                      <div className="min-w-0">
                         <p className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-amorah-brown">
                           Follow and message
                         </p>
                         <p className="mt-1 text-sm text-amorah-muted">Connect with Amorah online.</p>
                       </div>
 
-                      <div className="flex items-center gap-2.5">
+                      <div className="flex shrink-0 items-center gap-2">
                         <SocialLink
                           href={whatsappHref}
                           label="Chat with Amorah on WhatsApp"
@@ -354,19 +349,19 @@ function ContactPage() {
 
               <div>
                 <form
-                  className="border border-amorah-border bg-amorah-white p-5 shadow-[0_22px_70px_rgba(75,34,34,0.06)] sm:p-8 lg:p-10"
+                  className="border border-amorah-border bg-amorah-white p-4 shadow-[0_22px_70px_rgba(75,34,34,0.06)] sm:p-6 lg:p-7 xl:p-8"
                   onSubmit={handleSubmit}
                   noValidate
                 >
-                  <div className="flex flex-col gap-5 border-b border-amorah-border pb-7 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="flex flex-col gap-4 border-b border-amorah-border pb-5 sm:flex-row sm:items-start sm:justify-between">
                     <div className="max-w-2xl">
                       <p className="text-xs font-semibold uppercase tracking-[0.24em] text-amorah-terracotta">
                         Send an enquiry
                       </p>
-                      <h2 className="mt-3 font-heading text-3xl font-semibold leading-tight text-amorah-maroon sm:text-4xl lg:text-5xl">
+                      <h2 className="mt-2 font-heading text-2xl font-semibold leading-tight text-amorah-maroon sm:text-3xl lg:text-4xl">
                         How can we help?
                       </h2>
-                      <p className="mt-3 max-w-xl text-sm leading-7 text-amorah-brown">
+                      <p className="mt-2 max-w-xl text-sm leading-6 text-amorah-brown">
                         Share your details below. We will review your message and respond as soon as possible.
                       </p>
                     </div>
@@ -376,7 +371,7 @@ function ContactPage() {
                     </span>
                   </div>
 
-                  <div className="mt-7 grid gap-x-5 gap-y-6 sm:grid-cols-2">
+                  <div className="mt-5 grid gap-x-5 gap-y-4 sm:grid-cols-2">
                     <label className="block" htmlFor="contact-name">
                       <span className="text-sm font-semibold text-amorah-black">
                         Full name <span className="text-amorah-error">*</span>
@@ -476,7 +471,7 @@ function ContactPage() {
                     </label>
                   </div>
 
-                  <div className="mt-7 flex flex-col gap-5 border-t border-amorah-border pt-7 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="mt-5 flex flex-col gap-4 border-t border-amorah-border pt-5 sm:flex-row sm:items-center sm:justify-between">
                     <p className="flex max-w-sm items-start gap-2 text-xs leading-5 text-amorah-muted">
                       <FiCheck className="mt-0.5 shrink-0 text-sm text-amorah-maroon" aria-hidden="true" />
                       Your details will only be used to respond to this enquiry.
@@ -494,7 +489,7 @@ function ContactPage() {
                   </div>
                 </form>
 
-                <div className="mt-6 grid gap-4 sm:grid-cols-3">
+                <div className="mt-4 grid grid-cols-3 gap-2 sm:gap-3">
                   <EnquiryType
                     icon={<FiShoppingBag aria-hidden="true" />}
                     title="Order help"

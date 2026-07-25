@@ -121,7 +121,7 @@ function OrderDetailsPage() {
     return (
       <>
         <Seo
-          title="Order Not Found | Amorah by N-ZAN Designs"
+          title="Order Not Found | Amorah N-ZAN Designs"
           description="The requested Amorah order could not be found."
           path={`/account/orders/${orderNumber || 'not-found'}`}
           breadcrumbs={[
@@ -151,7 +151,7 @@ function OrderDetailsPage() {
   return (
     <>
       <Seo
-        title={`${order.orderNumber} | Amorah by N-ZAN Designs`}
+        title={`${order.orderNumber} | Amorah N-ZAN Designs`}
         description={`View Amorah order ${order.orderNumber}, payment method, status and ordered items.`}
         path={`/account/orders/${order.orderNumber}`}
         breadcrumbs={[

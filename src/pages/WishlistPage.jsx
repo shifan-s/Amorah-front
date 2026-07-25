@@ -61,7 +61,7 @@ function WishlistPage() {
   return (
     <>
       <Seo
-        title="Wishlist | Amorah by N-ZAN Designs"
+        title="Wishlist | Amorah N-ZAN Designs"
         description="Review saved Amorah dresses, kurtis, co-ord sets and favourite fashion pieces in your wishlist."
         path="/wishlist"
         breadcrumbs={[

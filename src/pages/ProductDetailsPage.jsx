@@ -149,7 +149,7 @@ function ProductDetailsPage() {
     return (
       <>
         <Seo
-          title="Product Not Found | Amorah by N-ZAN Designs"
+          title="Product Not Found | Amorah N-ZAN Designs"
           description="The requested Amorah product could not be found. Browse the latest dresses, kurtis and co-ord sets."
           path={`/product/${slug || 'not-found'}`}
           breadcrumbs={[
@@ -330,7 +330,7 @@ function ProductDetailsPage() {
   return (
     <>
       <Seo
-        title={`${product.name} | Amorah by N-ZAN Designs`}
+        title={`${product.name} | Amorah N-ZAN Designs`}
         description={product.shortDescription}
         path={`/product/${product.slug}`}
         image={seoImage}

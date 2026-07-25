@@ -68,7 +68,7 @@ function OrderSuccessPage() {
   return (
     <>
       <Seo
-        title="Order Status | Amorah by N-ZAN Designs"
+        title="Order Status | Amorah "
         description="View your Amorah order confirmation, payment status, delivery address and ordered products."
         path={`/order-success/${orderNumber || ''}`}
         breadcrumbs={[

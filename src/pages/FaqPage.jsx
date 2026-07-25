@@ -85,7 +85,7 @@ function FaqPage() {
   return (
     <>
       <Seo
-        title="FAQ | Amorah by N-ZAN Designs"
+        title="FAQ | Amorah N-ZAN Designs"
         description="Find answers to common Amorah questions about orders, payments, shipping, returns, sizes, care and accounts."
         path="/faq"
         breadcrumbs={[

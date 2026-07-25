@@ -28,7 +28,7 @@ function SizeGuidePage() {
   return (
     <>
       <Seo
-        title="Size Guide | Amorah by N-ZAN Designs"
+        title="Size Guide | Amorah N-ZAN Designs"
         description="Use the Amorah size guide for bust, waist and hip measurements with recommended sizes from XS to XL."
         path="/size-guide"
         breadcrumbs={[

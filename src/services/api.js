@@ -4,6 +4,9 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api',
   withCredentials: true,
   timeout: 12000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
 export function normalizeApiError(error, fallback = 'Unable to complete request') {
@@ -23,8 +26,17 @@ export function normalizeApiError(error, fallback = 'Unable to complete request'
     };
   }
 
+  if (error.message === 'Network Error') {
+    console.error('Amorah API connection failed.', error);
+    return {
+      message: 'Unable to connect to the API server.',
+      status: 0,
+      errors: [],
+    };
+  }
+
   return {
-    message: error.message === 'Network Error' ? 'Unable to reach the Amorah API.' : fallback,
+    message: fallback,
     status: 0,
     errors: [],
   };

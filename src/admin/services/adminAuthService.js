@@ -1,26 +1,30 @@
-import api from '../../services/api.js';
+import api, { normalizeApiError, unwrapData } from '../../services/api.js';
+
+function adminLoginError(error) {
+  const normalized = normalizeApiError(error, 'Unable to login as admin.');
+
+  if (normalized.status === 401) {
+    normalized.message = 'Invalid email or password.';
+  } else if (normalized.status === 403) {
+    normalized.message = 'You do not have administrator access.';
+  }
+
+  return normalized;
+}
 
 export async function loginAdmin(credentials) {
-  await api.post('/auth/login', credentials);
-  const response = await api.get('/auth/me');
-  const user = response.data?.data?.user;
+  let user;
+
+  try {
+    const response = await api.post('/auth/login', credentials);
+    user = unwrapData(response)?.user;
+  } catch (error) {
+    throw adminLoginError(error);
+  }
 
   if (user?.role !== 'admin') {
     await logoutAdmin();
-    const error = new Error('Only Amorah administrators can access this area.');
-    error.status = 403;
-    throw error;
-  }
-
-  return user;
-}
-
-export async function getAdminMe() {
-  const response = await api.get('/auth/me');
-  const user = response.data?.data?.user;
-
-  if (user?.role !== 'admin') {
-    const error = new Error('Only Amorah administrators can access this area.');
+    const error = new Error('You do not have administrator access.');
     error.status = 403;
     throw error;
   }
@@ -29,5 +33,9 @@ export async function getAdminMe() {
 }
 
 export async function logoutAdmin() {
-  await api.post('/auth/logout');
+  try {
+    await api.post('/auth/logout');
+  } catch (error) {
+    throw normalizeApiError(error, 'Unable to logout.');
+  }
 }
