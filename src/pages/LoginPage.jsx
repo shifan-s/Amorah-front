@@ -10,6 +10,7 @@ import Seo from '../components/common/Seo.jsx';
 import { loginCustomer } from '../services/authService.js';
 import { setAuthUser } from '../store/slices/authSlice.js';
 import { mergeGuestCart } from '../store/slices/cartSlice.js';
+import { getSafeReturnUrl } from '../utils/authRedirect.js';
 
 function LoginPage() {
   const dispatch = useDispatch();
@@ -50,7 +51,9 @@ function LoginPage() {
       }
 
       toast.success('Logged in');
-      navigate(location.state?.from || '/account', { replace: true });
+      const queryReturnUrl = new URLSearchParams(location.search).get('redirect');
+      const returnUrl = getSafeReturnUrl(location.state?.from || queryReturnUrl, '/');
+      navigate(returnUrl, { replace: true });
     } catch (error) {
       toast.error(error.message || 'Unable to login');
     } finally {

@@ -18,11 +18,11 @@ function ProtectedAdminRoute({ children }) {
   }
 
   if (status === 'forbidden') {
-    return <Navigate to="/admin/forbidden" replace />;
+    return <Navigate to="/" replace />;
   }
 
   if (!isAdmin) {
-    return <Navigate to="/admin/login" replace state={{ from: location.pathname }} />;
+    return <Navigate to="/admin/login" replace state={{ from: `${location.pathname}${location.search}` }} />;
   }
 
   return children;

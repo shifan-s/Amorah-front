@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import toast from 'react-hot-toast';
 import Button from '../components/common/Button.jsx';
@@ -8,10 +8,12 @@ import Seo from '../components/common/Seo.jsx';
 import { registerCustomer } from '../services/authService.js';
 import { setAuthUser } from '../store/slices/authSlice.js';
 import { mergeGuestCart } from '../store/slices/cartSlice.js';
+import { getSafeReturnUrl } from '../utils/authRedirect.js';
 
 function RegisterPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const [form, setForm] = useState({
     fullName: '',
     email: '',
@@ -59,7 +61,8 @@ function RegisterPage() {
       }
 
       toast.success('Account created');
-      navigate('/account');
+      const queryReturnUrl = new URLSearchParams(location.search).get('redirect');
+      navigate(getSafeReturnUrl(location.state?.from || queryReturnUrl, '/'), { replace: true });
     } catch (error) {
       toast.error(error.message || 'Unable to create account');
     } finally {

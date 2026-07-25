@@ -29,7 +29,7 @@ function AccountSidebar() {
       dispatch(clearAuthUser());
       dispatch(switchToGuestCart(loadCartState()));
       toast.success('Logged out');
-      navigate('/login');
+      navigate('/', { replace: true });
     }
   };
 

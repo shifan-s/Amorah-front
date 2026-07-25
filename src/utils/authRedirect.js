@@ -11,6 +11,21 @@ export function getCheckoutLoginState(from = '/checkout') {
   };
 }
 
+export function getSafeReturnUrl(value, fallback = '/') {
+  if (typeof value !== 'string' || !value.startsWith('/') || value.startsWith('//')) {
+    return fallback;
+  }
+
+  try {
+    const url = new URL(value, window.location.origin);
+    return url.origin === window.location.origin
+      ? `${url.pathname}${url.search}${url.hash}`
+      : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 export function isUnauthorizedError(error) {
   return Number(error?.status) === 401;
 }

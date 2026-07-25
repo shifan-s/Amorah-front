@@ -3,15 +3,41 @@ import { Link, NavLink } from 'react-router-dom';
 import { IoClose } from 'react-icons/io5';
 import { FiChevronDown, FiHeart, FiPackage, FiUser } from 'react-icons/fi';
 import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { useCustomerNavigationLinks } from './DesktopNavigation.jsx';
 import BrandLogo from './BrandLogo.jsx';
 import IconButton from '../common/IconButton.jsx';
 import { trapFocus } from '../../utils/focusTrap.js';
+import { logoutCustomer } from '../../services/authService.js';
+import { clearAuthUser, selectAuth } from '../../store/slices/authSlice.js';
+import { switchToGuestCart } from '../../store/slices/cartSlice.js';
+import { loadCartState } from '../../utils/storage.js';
 
 function MobileMenu({ open, onClose }) {
   const menuRef = useRef(null);
   const { links: navigationLinks, loading } = useCustomerNavigationLinks();
   const [openCategory, setOpenCategory] = useState('');
+  const [loggingOut, setLoggingOut] = useState(false);
+  const auth = useSelector(selectAuth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const logout = async () => {
+    setLoggingOut(true);
+    try {
+      await logoutCustomer();
+    } catch {
+      toast.error('Session logout could not be confirmed. Your local session was cleared.');
+    } finally {
+      dispatch(clearAuthUser());
+      dispatch(switchToGuestCart(loadCartState()));
+      setLoggingOut(false);
+      onClose();
+      navigate('/', { replace: true });
+    }
+  };
 
   useEffect(() => {
     if (!open) {
@@ -149,11 +175,16 @@ function MobileMenu({ open, onClose }) {
         <div className="mt-8 border-t border-amorah-border pt-6">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-amorah-terracotta">My Amorah</p>
           <div className="mt-3 grid gap-2">
-            {[
-              { label: 'Account', to: '/account', icon: <FiUser aria-hidden="true" /> },
-              { label: 'Orders', to: '/account/orders', icon: <FiPackage aria-hidden="true" /> },
+            {(auth.isAuthenticated && auth.user?.role === 'customer' ? [
+              { label: `Hello, ${auth.user.fullName?.trim().split(/\s+/)[0] || 'there'}`, to: '/account/profile', icon: <FiUser aria-hidden="true" /> },
+              { label: 'My Orders', to: '/account/orders', icon: <FiPackage aria-hidden="true" /> },
+              { label: 'Wishlist', to: '/account/wishlist', icon: <FiHeart aria-hidden="true" /> },
+              { label: 'Saved Addresses', to: '/account/addresses', icon: <FiUser aria-hidden="true" /> },
+            ] : [
+              { label: 'Login', to: '/login', icon: <FiUser aria-hidden="true" /> },
+              { label: 'Signup', to: '/signup', icon: <FiUser aria-hidden="true" /> },
               { label: 'Wishlist', to: '/wishlist', icon: <FiHeart aria-hidden="true" /> },
-            ].map((link) => (
+            ]).map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
@@ -164,6 +195,17 @@ function MobileMenu({ open, onClose }) {
                 {link.label}
               </Link>
             ))}
+            {auth.isAuthenticated && auth.user?.role === 'customer' ? (
+              <button
+                type="button"
+                className="amorah-focus flex items-center gap-3 py-2 text-left text-sm font-semibold text-amorah-brown hover:text-amorah-maroon disabled:opacity-60"
+                disabled={loggingOut}
+                onClick={logout}
+              >
+                <FiUser aria-hidden="true" />
+                {loggingOut ? 'Logging out...' : 'Logout'}
+              </button>
+            ) : null}
           </div>
         </div>
 

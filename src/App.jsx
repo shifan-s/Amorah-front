@@ -6,6 +6,7 @@ import PageLoader from './components/common/PageLoader.jsx';
 import ScrollToTop from './components/common/ScrollToTop.jsx';
 import SkipLink from './components/common/SkipLink.jsx';
 import ProtectedRoute from './components/account/ProtectedRoute.jsx';
+import PublicOnlyRoute from './components/account/PublicOnlyRoute.jsx';
 import ProtectedAdminRoute from './admin/components/ProtectedAdminRoute.jsx';
 import { AdminAuthProvider } from './admin/hooks/useAdminAuth.js';
 import AdminLayout from './admin/layouts/AdminLayout.jsx';
@@ -123,8 +124,9 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/login" element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />
+            <Route path="/signup" element={<PublicOnlyRoute><RegisterPage /></PublicOnlyRoute>} />
+            <Route path="/register" element={<Navigate to="/signup" replace />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
@@ -157,7 +159,7 @@ function App() {
             path="/admin/login"
             element={
               <AdminAuthProvider>
-                <AdminLoginPage />
+                <PublicOnlyRoute admin><AdminLoginPage /></PublicOnlyRoute>
               </AdminAuthProvider>
             }
           />
@@ -179,7 +181,8 @@ function App() {
               </AdminAuthProvider>
             }
           >
-            <Route index element={<AdminDashboardPage />} />
+            <Route index element={<Navigate to="/admin/dashboard" replace />} />
+            <Route path="dashboard" element={<AdminDashboardPage />} />
             <Route path="categories" element={<CategoryListPage />} />
             <Route path="categories/new" element={<CategoryCreatePage />} />
             <Route path="categories/:categoryId/edit" element={<CategoryEditPage />} />

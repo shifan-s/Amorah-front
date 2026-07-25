@@ -3,12 +3,12 @@ import {
   FiHeart,
   FiSearch,
   FiShoppingBag,
-  FiUser,
 } from 'react-icons/fi';
 import PropTypes from 'prop-types';
 import BrandLogo from './BrandLogo.jsx';
 import DesktopNavigation from './DesktopNavigation.jsx';
 import MobileHeader from './MobileHeader.jsx';
+import AccountMenu from './AccountMenu.jsx';
 
 const iconClassName =
   'amorah-focus group relative inline-flex h-10 w-10 shrink-0 items-center justify-center text-[1.15rem] text-amorah-black transition-colors duration-200 hover:bg-amorah-light hover:text-amorah-maroon';
@@ -107,9 +107,7 @@ function Header({
               <FiSearch aria-hidden="true" strokeWidth={1.7} />
             </HeaderActionIcon>
 
-            <HeaderLinkIcon to="/account" label="View account">
-              <FiUser aria-hidden="true" strokeWidth={1.7} />
-            </HeaderLinkIcon>
+            <AccountMenu />
 
             <HeaderLinkIcon
               to="/wishlist"

@@ -14,7 +14,7 @@ function AdminLoginPage() {
   const [saving, setSaving] = useState(false);
 
   if (isAdmin) {
-    return <Navigate to="/admin" replace />;
+    return <Navigate to="/admin/dashboard" replace />;
   }
 
   const updateField = (field, value) => {
@@ -37,11 +37,11 @@ function AdminLoginPage() {
     try {
       await signIn(form);
       toast.success('Admin login successful');
-      navigate(location.state?.from || '/admin', { replace: true });
+      navigate('/admin/dashboard', { replace: true });
     } catch (error) {
       if (error.status === 403) {
         toast.error('You do not have administrator access.');
-        navigate('/admin/forbidden', { replace: true });
+        navigate('/', { replace: true });
         return;
       }
       toast.error(error.message || 'Unable to login as admin.');
