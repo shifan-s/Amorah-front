@@ -1,18 +1,28 @@
 import { Link } from 'react-router-dom';
-import { FiHeart, FiSearch, FiShoppingBag, FiUser } from 'react-icons/fi';
+import {
+  FiHeart,
+  FiSearch,
+  FiShoppingBag,
+  FiUser,
+} from 'react-icons/fi';
 import PropTypes from 'prop-types';
 import BrandLogo from './BrandLogo.jsx';
 import DesktopNavigation from './DesktopNavigation.jsx';
 import MobileHeader from './MobileHeader.jsx';
-import IconButton from '../common/IconButton.jsx';
 
 const iconClassName =
-  'amorah-focus relative inline-flex h-11 w-11 items-center justify-center border border-transparent text-lg text-amorah-black transition hover:bg-amorah-light hover:text-amorah-maroon';
+  'amorah-focus group relative inline-flex h-10 w-10 shrink-0 items-center justify-center text-[1.15rem] text-amorah-black transition-colors duration-200 hover:bg-amorah-light hover:text-amorah-maroon';
 
 function CountBadge({ count }) {
+  if (count <= 0) {
+    return null;
+  }
+
+  const displayCount = count > 99 ? '99+' : count;
+
   return (
-    <span className="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center bg-amorah-maroon px-1 text-[10px] font-semibold text-amorah-white">
-      {count}
+    <span className="absolute right-0.5 top-0.5 flex h-[1.05rem] min-w-[1.05rem] items-center justify-center rounded-full border-2 border-amorah-white bg-amorah-maroon px-0.5 text-[0.55rem] font-bold leading-none text-amorah-white">
+      {displayCount}
     </span>
   );
 }
@@ -23,7 +33,12 @@ CountBadge.propTypes = {
 
 function HeaderLinkIcon({ to, label, count, children }) {
   return (
-    <Link to={to} className={iconClassName} aria-label={label} title={label}>
+    <Link
+      to={to}
+      className={iconClassName}
+      aria-label={label}
+      title={label}
+    >
       {children}
       {typeof count === 'number' ? <CountBadge count={count} /> : null}
     </Link>
@@ -39,7 +54,13 @@ HeaderLinkIcon.propTypes = {
 
 function HeaderActionIcon({ label, count, children, onClick }) {
   return (
-    <button type="button" className={iconClassName} aria-label={label} title={label} onClick={onClick}>
+    <button
+      type="button"
+      className={iconClassName}
+      aria-label={label}
+      title={label}
+      onClick={onClick}
+    >
       {children}
       {typeof count === 'number' ? <CountBadge count={count} /> : null}
     </button>
@@ -53,9 +74,15 @@ HeaderActionIcon.propTypes = {
   onClick: PropTypes.func.isRequired,
 };
 
-function Header({ onSearchOpen, onMobileMenuOpen, onCartOpen, wishlistCount = 0, cartCount = 0 }) {
+function Header({
+  onSearchOpen,
+  onMobileMenuOpen,
+  onCartOpen,
+  wishlistCount = 0,
+  cartCount = 0,
+}) {
   return (
-    <header className="sticky top-0 z-40 border-b border-amorah-border bg-amorah-white/95 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-amorah-border/80 bg-amorah-white/95 shadow-[0_1px_12px_rgba(52,30,25,0.035)] backdrop-blur-md">
       <MobileHeader
         onMenuOpen={onMobileMenuOpen}
         onSearchOpen={onSearchOpen}
@@ -65,23 +92,39 @@ function Header({ onSearchOpen, onMobileMenuOpen, onCartOpen, wishlistCount = 0,
       />
 
       <div className="hidden lg:block">
-        <div className="mx-auto grid max-w-[1500px] grid-cols-[1fr_auto_1fr] items-center gap-6 px-10 py-4 xl:px-14">
-          <DesktopNavigation className="justify-start" />
+        <div className="mx-auto grid h-[4.75rem] max-w-[1600px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-6 px-7 xl:gap-10 xl:px-12 2xl:px-16">
+          <div className="flex min-w-[160px] items-center">
+            <BrandLogo size="md" />
+          </div>
 
-          <BrandLogo size="md" />
+          <DesktopNavigation className="justify-center" />
 
-          <div className="flex items-center justify-end gap-2">
-            <IconButton label="Open search" variant="ghost" onClick={onSearchOpen}>
-              <FiSearch aria-hidden="true" />
-            </IconButton>
+          <div className="flex min-w-[160px] items-center justify-end gap-1">
+            <HeaderActionIcon
+              label="Open search"
+              onClick={onSearchOpen}
+            >
+              <FiSearch aria-hidden="true" strokeWidth={1.7} />
+            </HeaderActionIcon>
+
             <HeaderLinkIcon to="/account" label="View account">
-              <FiUser aria-hidden="true" />
+              <FiUser aria-hidden="true" strokeWidth={1.7} />
             </HeaderLinkIcon>
-            <HeaderLinkIcon to="/wishlist" label="View wishlist" count={wishlistCount}>
-              <FiHeart aria-hidden="true" />
+
+            <HeaderLinkIcon
+              to="/wishlist"
+              label="View wishlist"
+              count={wishlistCount}
+            >
+              <FiHeart aria-hidden="true" strokeWidth={1.7} />
             </HeaderLinkIcon>
-            <HeaderActionIcon label="Open cart" count={cartCount} onClick={onCartOpen}>
-              <FiShoppingBag aria-hidden="true" />
+
+            <HeaderActionIcon
+              label="Open cart"
+              count={cartCount}
+              onClick={onCartOpen}
+            >
+              <FiShoppingBag aria-hidden="true" strokeWidth={1.7} />
             </HeaderActionIcon>
           </div>
         </div>
