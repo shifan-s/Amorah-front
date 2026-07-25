@@ -1,6 +1,5 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import PageLoader from './components/common/PageLoader.jsx';
@@ -13,7 +12,7 @@ import AdminLayout from './admin/layouts/AdminLayout.jsx';
 import AccountLayout from './layouts/AccountLayout.jsx';
 import StoreLayout from './layouts/StoreLayout.jsx';
 import { getCurrentCustomer } from './services/authService.js';
-import { clearAuthUser, selectAuth, setAuthStatus, setAuthUser } from './store/slices/authSlice.js';
+import { clearAuthUser, setAuthStatus, setAuthUser } from './store/slices/authSlice.js';
 import { fetchBackendCart, switchToGuestCart } from './store/slices/cartSlice.js';
 import { fetchPublicCategories, selectCategoryStatus } from './store/slices/categorySlice.js';
 import { CHECKOUT_LOGIN_MESSAGE } from './utils/authRedirect.js';
@@ -60,7 +59,7 @@ const AdminForbiddenPage = lazy(() => import('./admin/pages/AdminForbiddenPage.j
 function App() {
   const dispatch = useDispatch();
   const categoryStatus = useSelector(selectCategoryStatus);
-  const auth = useSelector(selectAuth);
+  const authInitializationStarted = useRef(false);
 
   useEffect(() => {
     if (categoryStatus === 'idle') {
@@ -69,33 +68,23 @@ function App() {
   }, [categoryStatus, dispatch]);
 
   useEffect(() => {
-    if (auth.status !== 'idle') {
+    if (authInitializationStarted.current) {
       return;
     }
 
-    let ignore = false;
+    authInitializationStarted.current = true;
     dispatch(setAuthStatus('loading'));
 
     getCurrentCustomer()
       .then((user) => {
-        if (!ignore) {
-          dispatch(setAuthUser({ ...user, rememberMe: auth.user?.rememberMe }));
-          dispatch(fetchBackendCart());
-          dispatch(setAuthStatus('succeeded'));
-        }
+        dispatch(setAuthUser(user));
+        dispatch(fetchBackendCart());
       })
       .catch(() => {
-        if (!ignore) {
-          dispatch(clearAuthUser());
-          dispatch(setAuthStatus('failed'));
-          dispatch(switchToGuestCart(loadCartState()));
-        }
+        dispatch(clearAuthUser());
+        dispatch(switchToGuestCart(loadCartState()));
       });
-
-    return () => {
-      ignore = true;
-    };
-  }, [auth.isAuthenticated, auth.status, auth.user?.rememberMe, dispatch]);
+  }, [dispatch]);
 
   return (
     <>
