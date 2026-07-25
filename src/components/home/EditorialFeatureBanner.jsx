@@ -24,7 +24,7 @@ function EditorialFeatureBanner() {
     <section className="bg-amorah-light py-16 sm:py-20 lg:py-24">
       <Container>
         <div className="grid overflow-hidden bg-amorah-white lg:grid-cols-[1.35fr_0.85fr] lg:items-stretch">
-          <div className="min-h-[360px] overflow-hidden lg:min-h-[520px]">
+          <div className="min-h-[300px] overflow-hidden lg:min-h-[400px]">
             <img
               src={imageAssets.editorial.ethnicCampaign.src}
               alt={imageAssets.editorial.ethnicCampaign.alt}
@@ -39,7 +39,7 @@ function EditorialFeatureBanner() {
                 Made for Moments That Matter
               </h2>
               <p className="mt-5 text-base leading-8 text-amorah-brown">
-                Explore elevated partywear and graceful gowns selected for celebrations, evenings and special occasions.
+                Celebrate every special moment in timeless style. Discover thoughtfully curated partywear and elegant gowns designed with refined details, graceful silhouettes and effortless sophistication for weddings, festive gatherings and unforgettable evenings.
               </p>
               <Link
                 to={linkTo}

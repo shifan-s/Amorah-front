@@ -1,4 +1,5 @@
 import heroImage from '../assets/images/hero-amo.png';
+import occasionCampaignImage from '../assets/images/newee.jpeg';
 
 export const imageAssets = {
   productImages: {
@@ -95,8 +96,8 @@ export const imageAssets = {
       alt: 'Natural cotton textile and garment details in warm light',
     },
     ethnicCampaign: {
-      src: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=2200&q=82',
-      alt: 'Ethnic wear campaign photographed against a warm heritage wall',
+      src: occasionCampaignImage,
+      alt: 'Model wearing a peacock blue Bandhej kurta set in Upada silk by Amorah',
     },
     craftsmanship: {
       src: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=1400&q=80',
