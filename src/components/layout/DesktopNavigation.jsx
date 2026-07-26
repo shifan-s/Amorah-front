@@ -1,10 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { FiChevronDown } from 'react-icons/fi';
-import {
-  selectCategoryStatus,
-  selectNavigationCategories,
-} from '../../store/slices/categorySlice.js';
+import { selectNavigationCategories } from '../../store/slices/categorySlice.js';
 
 const staticLinks = [
   { label: 'Home', to: '/' },
@@ -23,7 +20,6 @@ function isCottonCategory(category) {
 
 export function useCustomerNavigationLinks() {
   const categories = useSelector(selectNavigationCategories);
-  const status = useSelector(selectCategoryStatus);
 
   const categoryLinks = categories
     .filter((category) => !isCottonCategory(category))
@@ -34,7 +30,6 @@ export function useCustomerNavigationLinks() {
     }));
 
   return {
-    loading: status === 'idle' || status === 'loading',
     links: [
       staticLinks[0],
       staticLinks[1],
@@ -207,22 +202,8 @@ function MoreNavigation({ links }) {
   );
 }
 
-function LoadingNavigation() {
-  return (
-    <div className="flex items-center gap-5" aria-label="Loading navigation">
-      {[58, 68, 92, 76].map((width, index) => (
-        <span
-          key={`${width}-${index}`}
-          className="h-3 animate-pulse bg-amorah-light"
-          style={{ width }}
-        />
-      ))}
-    </div>
-  );
-}
-
 function DesktopNavigation({ className = '' }) {
-  const { links, loading } = useCustomerNavigationLinks();
+  const { links } = useCustomerNavigationLinks();
 
   const homeLink = links.find((link) => link.to === '/');
   const shopLink = links.find((link) => link.to === '/shop');
@@ -257,14 +238,11 @@ function DesktopNavigation({ className = '' }) {
       className={`hidden min-w-0 items-center gap-4 lg:flex xl:gap-6 ${className}`}
       aria-label="Primary navigation"
     >
-      {loading ? <LoadingNavigation /> : null}
+      {visibleLinks.map((link) => (
+        <NavigationLink key={link.to} link={link} />
+      ))}
 
-      {!loading &&
-        visibleLinks.map((link) => (
-          <NavigationLink key={link.to} link={link} />
-        ))}
-
-      {!loading && overflowLinks.length > 0 ? (
+      {overflowLinks.length > 0 ? (
         <MoreNavigation links={overflowLinks} />
       ) : null}
     </nav>

@@ -1,14 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { FiFilter, FiSearch } from 'react-icons/fi';
+import { FiSearch } from 'react-icons/fi';
 import Button from '../components/common/Button.jsx';
 import Container from '../components/common/Container.jsx';
 import EmptyState from '../components/common/EmptyState.jsx';
 import Seo from '../components/common/Seo.jsx';
-import ActiveFilterChips from '../components/product/ActiveFilterChips.jsx';
-import MobileFilterDrawer from '../components/product/MobileFilterDrawer.jsx';
-import ProductFilters from '../components/product/ProductFilters.jsx';
 import ProductGrid from '../components/product/ProductGrid.jsx';
 import SortDropdown from '../components/product/SortDropdown.jsx';
 import { getCategoryBySlug } from '../services/categoryService.js';
@@ -16,7 +13,7 @@ import { getProducts } from '../services/productService.js';
 import { PRODUCT_FABRICS, PRODUCT_OCCASIONS, PRODUCT_STYLES, PRODUCT_TYPES } from '../constants/productOptions.js';
 import { selectMainCategories } from '../store/slices/categorySlice.js';
 import { upsertProducts } from '../store/slices/productSlice.js';
-import { getFilterOptions, getFiltersFromSearchParams, slugify, titleFromSlug } from '../utils/productFilters.js';
+import { getFiltersFromSearchParams, slugify, titleFromSlug } from '../utils/productFilters.js';
 
 const pageSize = 12;
 
@@ -92,7 +89,6 @@ function ShopPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const mainCategories = useSelector(selectMainCategories);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const [products, setProducts] = useState([]);
   const [meta, setMeta] = useState({ page: 1, limit: pageSize, total: 0, totalPages: 1 });
@@ -104,21 +100,6 @@ function ShopPage() {
 
   const filters = useMemo(() => getFiltersFromSearchParams(searchParams), [searchParams]);
   const page = Math.max(1, Number(searchParams.get('page')) || 1);
-  const options = useMemo(() => {
-    const baseOptions = getFilterOptions(products);
-    const subcategories = mainCategories.flatMap((mainCategory) =>
-      (mainCategory.children || []).map((subcategory) => ({
-        ...subcategory,
-        parent: { id: mainCategory.id, name: mainCategory.name, slug: mainCategory.slug },
-      })),
-    );
-
-    return {
-      ...baseOptions,
-      mainCategories,
-      subcategories,
-    };
-  }, [mainCategories, products]);
   const activeCategory = useMemo(() => {
     if (!categorySlug) {
       return null;
@@ -234,74 +215,9 @@ function ShopPage() {
     replaceFilters(nextFilters);
   };
 
-  const handleSizeToggle = (size) => {
-    const sizes = filters.sizes.includes(size)
-      ? filters.sizes.filter((item) => item !== size)
-      : [...filters.sizes, size];
-    updateFilter({ sizes });
-  };
-
-  const handleColourToggle = (colour) => {
-    const colours = filters.colours.includes(colour)
-      ? filters.colours.filter((item) => item !== colour)
-      : [...filters.colours, colour];
-    updateFilter({ colours });
-  };
-
-  const handlePriceChange = ({ min, max }) => {
-    updateFilter({
-      min: Math.max(0, Math.min(min, max)),
-      max: Math.max(min, max),
-    });
-  };
-
   const handleClearFilters = () => {
     navigate(categorySlug ? `/shop/${categorySlug}` : '/shop');
     setSearchInput('');
-  };
-
-  const handleChipRemove = (key) => {
-    if (['productType', 'style', 'fabric', 'occasion'].includes(key)) {
-      updateFilter({ [key]: '' });
-      return;
-    }
-
-    if (key === 'mainCategory') {
-      navigate('/shop');
-      return;
-    }
-
-    if (key === 'subcategory') {
-      updateFilter({ subcategory: '' });
-      return;
-    }
-
-    if (key.startsWith('size:')) {
-      updateFilter({ sizes: filters.sizes.filter((size) => size !== key.split(':')[1]) });
-      return;
-    }
-
-    if (key.startsWith('colour:')) {
-      updateFilter({ colours: filters.colours.filter((colour) => colour !== key.split(':')[1]) });
-      return;
-    }
-
-    if (key === 'price') updateFilter({ min: 0, max: 10000 });
-    if (key === 'availability') updateFilter({ availability: false });
-    if (key === 'newArrival') updateFilter({ newArrival: false });
-    if (key === 'bestSeller') updateFilter({ bestSeller: false });
-    if (key === 'sale') updateFilter({ sale: false });
-  };
-
-  const filterProps = {
-    filters: { ...filters, mainCategory: categorySlug || filters.mainCategory },
-    options,
-    onOptionChange: (key, value) => updateFilter({ [key]: value }),
-    onSizeToggle: handleSizeToggle,
-    onColourToggle: handleColourToggle,
-    onPriceChange: handlePriceChange,
-    onAvailabilityToggle: () => updateFilter({ availability: !filters.availability }),
-    onClear: handleClearFilters,
   };
 
   return (
@@ -422,23 +338,10 @@ function ShopPage() {
               onAction={() => navigate(`/shop/${activeCategory.slug}`)}
             />
           ) : (
-            <div className="mt-8 grid gap-8 lg:grid-cols-[280px_1fr]">
-              <div className="hidden lg:block">
-                <div className="sticky top-28 border border-amorah-border bg-amorah-white p-5">
-                  <ProductFilters {...filterProps} />
-                </div>
-              </div>
-
+            <div className="mt-8">
               <section>
-                <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                  <ActiveFilterChips filters={{ ...filters, mainCategory: categorySlug || filters.mainCategory }} onRemove={handleChipRemove} onClear={handleClearFilters} />
-                  <div className="flex items-center gap-3 sm:ml-auto">
-                    <Button variant="outline" className="lg:hidden" onClick={() => setIsFilterOpen(true)}>
-                      <FiFilter aria-hidden="true" />
-                      Filters
-                    </Button>
-                    <SortDropdown value={filters.sort} onChange={(sort) => updateFilter({ sort })} />
-                  </div>
+                <div className="mb-5 flex justify-end">
+                  <SortDropdown value={filters.sort} onChange={(sort) => updateFilter({ sort })} />
                 </div>
 
                 {productError ? (
@@ -478,7 +381,6 @@ function ShopPage() {
           )}
         </Container>
 
-        <MobileFilterDrawer open={isFilterOpen} onClose={() => setIsFilterOpen(false)} {...filterProps} />
       </main>
     </>
   );

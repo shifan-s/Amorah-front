@@ -74,17 +74,27 @@ function App() {
     }
 
     authInitializationStarted.current = true;
-    dispatch(setAuthStatus('loading'));
+    async function initializeCustomer() {
+      let finalAuthStatus = 'failed';
 
-    getCurrentCustomer()
-      .then((user) => {
+      dispatch(setAuthStatus('loading'));
+
+      try {
+        const user = await getCurrentCustomer();
         dispatch(setAuthUser(user));
-        dispatch(fetchBackendCart());
-      })
-      .catch(() => {
+        finalAuthStatus = 'succeeded';
+
+        // Cart data loads independently and never blocks the account icon or navigation.
+        void dispatch(fetchBackendCart());
+      } catch {
         dispatch(clearAuthUser());
         dispatch(switchToGuestCart(loadCartState()));
-      });
+      } finally {
+        dispatch(setAuthStatus(finalAuthStatus));
+      }
+    }
+
+    void initializeCustomer();
   }, [dispatch]);
 
   return (

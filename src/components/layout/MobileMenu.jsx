@@ -17,7 +17,7 @@ import { loadCartState } from '../../utils/storage.js';
 
 function MobileMenu({ open, onClose }) {
   const menuRef = useRef(null);
-  const { links: navigationLinks, loading } = useCustomerNavigationLinks();
+  const { links: navigationLinks } = useCustomerNavigationLinks();
   const [openCategory, setOpenCategory] = useState('');
   const [loggingOut, setLoggingOut] = useState(false);
   const auth = useSelector(selectAuth);
@@ -164,11 +164,6 @@ function MobileMenu({ open, onClose }) {
                 )}
               </li>
             ))}
-            {loading ? (
-              <li className="px-2 py-3 text-sm font-semibold uppercase tracking-[0.14em] text-amorah-brown">
-                Loading collection
-              </li>
-            ) : null}
           </ul>
         </nav>
 

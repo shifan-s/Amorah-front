@@ -18,6 +18,10 @@ function BrandLogo({ size = 'md', className = '' }) {
       <img
         src={amorahLogo}
         alt="Amorah "
+        width="220"
+        height="60"
+        loading="eager"
+        fetchPriority="high"
         className={`${sizes[size]} h-auto max-h-16 object-contain`}
       />
     </Link>
