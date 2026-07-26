@@ -235,7 +235,13 @@ function ContactPage() {
       setForm(initialForm);
       setErrors({});
     } catch (error) {
-      toast.error(error?.response?.data?.message || 'Unable to send your enquiry. Please try again.');
+      const errorMessage =
+        error?.response?.data?.message ||
+        (error?.code === 'ECONNABORTED'
+          ? 'The request timed out. Your enquiry was not sent. Please try again.'
+          : 'Your enquiry was not sent. Please try again or email contact@amorah.online directly.');
+
+      toast.error(errorMessage, { duration: 7000 });
     } finally {
       setIsSubmitting(false);
     }
