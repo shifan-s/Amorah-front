@@ -12,9 +12,14 @@ function AdminLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const logout = async () => {
-    await signOut();
-    toast.success('Logged out');
-    navigate('/admin/login', { replace: true });
+    try {
+      await signOut();
+      toast.success('Logged out');
+    } catch {
+      toast.error('The server could not confirm logout. Your local session was cleared.');
+    } finally {
+      navigate('/admin/login', { replace: true });
+    }
   };
 
   return (

@@ -31,7 +31,7 @@ function AdminLoginPage() {
 
   const submit = async (event) => {
     event.preventDefault();
-    if (!validate()) return;
+    if (saving || !validate()) return;
 
     setSaving(true);
     try {

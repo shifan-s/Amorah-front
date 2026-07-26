@@ -13,11 +13,11 @@ import AdminLayout from './admin/layouts/AdminLayout.jsx';
 import AccountLayout from './layouts/AccountLayout.jsx';
 import StoreLayout from './layouts/StoreLayout.jsx';
 import { getCurrentCustomer } from './services/authService.js';
-import { clearAuthUser, setAuthStatus, setAuthUser } from './store/slices/authSlice.js';
+import { clearAuthUser, selectAuth, setAuthStatus, setAuthUser } from './store/slices/authSlice.js';
 import { fetchBackendCart, switchToGuestCart } from './store/slices/cartSlice.js';
 import { fetchPublicCategories, selectCategoryStatus } from './store/slices/categorySlice.js';
 import { CHECKOUT_LOGIN_MESSAGE } from './utils/authRedirect.js';
-import { loadCartState } from './utils/storage.js';
+import { clearAuthTokens, getStoredAuthTokens, loadCartState } from './utils/storage.js';
 
 const HomePage = lazy(() => import('./pages/HomePage.jsx'));
 const ShopPage = lazy(() => import('./pages/ShopPage.jsx'));
@@ -60,6 +60,7 @@ const AdminForbiddenPage = lazy(() => import('./admin/pages/AdminForbiddenPage.j
 function App() {
   const dispatch = useDispatch();
   const categoryStatus = useSelector(selectCategoryStatus);
+  const auth = useSelector(selectAuth);
   const authInitializationStarted = useRef(false);
 
   useEffect(() => {
@@ -74,6 +75,13 @@ function App() {
     }
 
     authInitializationStarted.current = true;
+
+    if (!auth.isAuthenticated && !getStoredAuthTokens().accessToken) {
+      dispatch(setAuthStatus('failed'));
+      dispatch(switchToGuestCart(loadCartState()));
+      return;
+    }
+
     async function initializeCustomer() {
       let finalAuthStatus = 'failed';
 
@@ -87,6 +95,7 @@ function App() {
         // Cart data loads independently and never blocks the account icon or navigation.
         void dispatch(fetchBackendCart());
       } catch {
+        clearAuthTokens();
         dispatch(clearAuthUser());
         dispatch(switchToGuestCart(loadCartState()));
       } finally {
@@ -95,7 +104,7 @@ function App() {
     }
 
     void initializeCustomer();
-  }, [dispatch]);
+  }, [auth.isAuthenticated, dispatch]);
 
   return (
     <>

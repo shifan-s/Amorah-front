@@ -1,5 +1,7 @@
 import api from '../../services/api.js';
 
+const pendingProductLists = new Map();
+
 function normalizeParams(filters = {}) {
   return Object.fromEntries(
     Object.entries(filters).filter(([, value]) => value !== undefined && value !== null && value !== ''),
@@ -36,12 +38,24 @@ export function mapApiFieldErrors(error) {
 }
 
 export async function getProducts(filters = {}) {
-  const response = await api.get('/admin/products', { params: normalizeParams(filters) });
+  const params = normalizeParams(filters);
+  const requestKey = JSON.stringify(params);
 
-  return {
-    products: response.data?.data?.products || [],
-    meta: response.data?.data?.meta || { page: 1, limit: 20, total: 0, totalPages: 1 },
-  };
+  if (!pendingProductLists.has(requestKey)) {
+    const request = api
+      .get('/admin/products', { params })
+      .then((response) => ({
+        products: response.data?.data?.products || [],
+        meta: response.data?.data?.meta || { page: 1, limit: 20, total: 0, totalPages: 1 },
+      }))
+      .finally(() => {
+        pendingProductLists.delete(requestKey);
+      });
+
+    pendingProductLists.set(requestKey, request);
+  }
+
+  return pendingProductLists.get(requestKey);
 }
 
 export async function getProductById(productId) {

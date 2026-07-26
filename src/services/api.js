@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getStoredAuthTokens } from '../utils/storage.js';
+import { clearAuthTokens, getStoredAuthTokens } from '../utils/storage.js';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api',
@@ -17,6 +17,23 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const requestUrl = String(error.config?.url || '');
+
+    if (error.response?.status === 401 && requestUrl.startsWith('/admin/')) {
+      clearAuthTokens();
+
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('amorah:admin-unauthorized'));
+      }
+    }
+
+    return Promise.reject(error);
+  },
+);
 
 export function normalizeApiError(error, fallback = 'Unable to complete request') {
   if (error.response) {

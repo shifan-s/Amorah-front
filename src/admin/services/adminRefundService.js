@@ -1,6 +1,8 @@
 import api from '../../services/api.js';
 import { getReadableApiError } from './adminProductService.js';
 
+const pendingRefundLists = new Map();
+
 function normalizeParams(filters = {}) {
   return Object.fromEntries(
     Object.entries(filters).filter(([, value]) => value !== undefined && value !== null && value !== ''),
@@ -8,12 +10,25 @@ function normalizeParams(filters = {}) {
 }
 
 export async function getRefunds(filters = {}) {
+  const params = normalizeParams(filters);
+  const requestKey = JSON.stringify(params);
+
   try {
-    const response = await api.get('/admin/refunds', { params: normalizeParams(filters) });
-    return {
-      refunds: response.data?.data?.refunds || [],
-      pagination: response.data?.data?.pagination || { page: 1, limit: 20, totalRefunds: 0, totalPages: 1 },
-    };
+    if (!pendingRefundLists.has(requestKey)) {
+      const request = api
+        .get('/admin/refunds', { params })
+        .then((response) => ({
+          refunds: response.data?.data?.refunds || [],
+          pagination: response.data?.data?.pagination || { page: 1, limit: 20, totalRefunds: 0, totalPages: 1 },
+        }))
+        .finally(() => {
+          pendingRefundLists.delete(requestKey);
+        });
+
+      pendingRefundLists.set(requestKey, request);
+    }
+
+    return await pendingRefundLists.get(requestKey);
   } catch (error) {
     throw new Error(getReadableApiError(error, 'Unable to load refunds.'));
   }

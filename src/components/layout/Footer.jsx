@@ -173,7 +173,7 @@ function Footer() {
           <BrandLogo size="md" className="justify-start" />
 
           <p className="mt-6 max-w-sm text-sm leading-7 text-amorah-brown">
-            Thoughtfully curated women&apos;s fashion by N-ZAN Designs,
+            Thoughtfully curated women&apos;s fashion Amorah 
             created for everyday elegance, meaningful celebrations and
             memorable moments.
           </p>
