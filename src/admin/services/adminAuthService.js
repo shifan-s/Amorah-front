@@ -1,5 +1,4 @@
-import api, { normalizeApiError, unwrapData } from '../../services/api.js';
-import { clearAuthTokens, saveAuthTokens } from '../../utils/storage.js';
+import api, { normalizeApiError, setAccessToken, unwrapData } from '../../services/api.js';
 
 function adminLoginError(error) {
   const normalized = normalizeApiError(error, 'Unable to login as admin.');
@@ -32,13 +31,7 @@ export async function loginAdmin(credentials) {
     throw error;
   }
 
-  saveAuthTokens(
-    {
-      accessToken: session?.accessToken,
-      refreshToken: session?.refreshToken,
-    },
-    true,
-  );
+  setAccessToken(session?.accessToken);
 
   return user;
 }
@@ -49,6 +42,6 @@ export async function logoutAdmin() {
   } catch (error) {
     throw normalizeApiError(error, 'Unable to logout.');
   } finally {
-    clearAuthTokens();
+    setAccessToken('');
   }
 }

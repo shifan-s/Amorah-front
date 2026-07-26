@@ -12,7 +12,6 @@ import { refreshCustomerSession } from '../services/authService.js';
 import { setAuthUser } from '../store/slices/authSlice.js';
 import { mergeGuestCart } from '../store/slices/cartSlice.js';
 import { getSafeReturnUrl } from '../utils/authRedirect.js';
-import { saveAuthTokens } from '../utils/storage.js';
 
 function LoginPage() {
   const dispatch = useDispatch();
@@ -43,8 +42,7 @@ function LoginPage() {
     try {
       setSubmitting(true);
       const session = await loginCustomer(form);
-      const { user, accessToken, refreshToken } = session;
-      saveAuthTokens({ accessToken, refreshToken }, rememberMe);
+      const { user, accessToken } = session;
       dispatch(setAuthUser({ ...user, rememberMe }));
 
       const mergeId = `guest-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -54,7 +52,7 @@ function LoginPage() {
         try {
           let retryAccessToken = accessToken;
           if (firstError?.status === 401) {
-            const refreshed = await refreshCustomerSession(refreshToken, rememberMe);
+            const refreshed = await refreshCustomerSession();
             retryAccessToken = refreshed.accessToken;
           }
           await dispatch(mergeGuestCart({ accessToken: retryAccessToken, mergeId })).unwrap();
@@ -64,6 +62,10 @@ function LoginPage() {
       }
 
       toast.success('Logged in successfully');
+      if (user.role === 'admin') {
+        navigate('/admin/dashboard', { replace: true });
+        return;
+      }
       const queryReturnUrl = new URLSearchParams(location.search).get('redirect');
       const returnUrl = getSafeReturnUrl(location.state?.from || queryReturnUrl, '/');
       navigate(returnUrl, { replace: true });

@@ -9,7 +9,6 @@ import { registerCustomer } from '../services/authService.js';
 import { setAuthUser } from '../store/slices/authSlice.js';
 import { mergeGuestCart } from '../store/slices/cartSlice.js';
 import { getSafeReturnUrl } from '../utils/authRedirect.js';
-import { saveAuthTokens } from '../utils/storage.js';
 
 function RegisterPage() {
   const dispatch = useDispatch();
@@ -52,8 +51,7 @@ function RegisterPage() {
         mobile: form.mobile,
         password: form.password,
       });
-      const { user, accessToken, refreshToken } = session;
-      saveAuthTokens({ accessToken, refreshToken });
+      const { user, accessToken } = session;
       dispatch(setAuthUser(user));
 
       try {

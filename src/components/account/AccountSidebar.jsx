@@ -1,6 +1,6 @@
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { FiHeart, FiHome, FiLogOut, FiMapPin, FiPackage, FiUser } from 'react-icons/fi';
+import { FiBell, FiHeart, FiHome, FiLogOut, FiMapPin, FiPackage, FiUser } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import { logoutCustomer } from '../../services/authService.js';
 import { clearAuthUser } from '../../store/slices/authSlice.js';
@@ -13,6 +13,7 @@ const accountLinks = [
   { label: 'Orders', to: '/account/orders', icon: <FiPackage aria-hidden="true" /> },
   { label: 'Addresses', to: '/account/addresses', icon: <FiMapPin aria-hidden="true" /> },
   { label: 'Wishlist', to: '/account/wishlist', icon: <FiHeart aria-hidden="true" /> },
+  { label: 'Notifications', to: '/account/notifications', icon: <FiBell aria-hidden="true" /> },
 ];
 
 function AccountSidebar() {

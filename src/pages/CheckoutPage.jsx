@@ -137,6 +137,7 @@ function CheckoutPage() {
   const [billingSameAsShipping, setBillingSameAsShipping] = useState(true);
   const [billingAddressId, setBillingAddressId] = useState('');
   const [customerNotes, setCustomerNotes] = useState(checkout.notes || '');
+  const [policyAccepted, setPolicyAccepted] = useState(false);
   const [preview, setPreview] = useState(null);
   const [previewError, setPreviewError] = useState(null);
   const [paymentState, setPaymentState] = useState('idle');
@@ -359,6 +360,11 @@ function CheckoutPage() {
 
     if (!shippingAddressId || (!billingSameAsShipping && !billingAddressId)) {
       toast.error('Please select your checkout address.');
+      return;
+    }
+
+    if (!policyAccepted) {
+      toast.error('Please accept the cancellation, return and refund policy.');
       return;
     }
 
@@ -664,11 +670,23 @@ function CheckoutPage() {
                 ) : null}
 
                 <div className="border border-amorah-border bg-amorah-white p-5 sm:p-6">
+                  <label className="mb-5 flex items-start gap-3 text-sm leading-6 text-amorah-brown">
+                    <input
+                      type="checkbox"
+                      required
+                      checked={policyAccepted}
+                      onChange={(event) => setPolicyAccepted(event.target.checked)}
+                      className="mt-1 h-4 w-4 shrink-0 accent-amorah-maroon"
+                    />
+                    <span>
+                      I understand that this order can be cancelled only before dispatch and that returns and refunds are not available after dispatch.
+                    </span>
+                  </label>
                   <Button
                     type="submit"
                     className="w-full"
                     loading={paymentBusy}
-                    disabled={!preview || previewLoading || Boolean(previewError) || addressStatus !== 'succeeded'}
+                    disabled={!preview || !policyAccepted || previewLoading || Boolean(previewError) || addressStatus !== 'succeeded'}
                   >
                     Pay Securely with Razorpay
                   </Button>

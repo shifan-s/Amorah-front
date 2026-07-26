@@ -12,12 +12,12 @@ import { AdminAuthProvider } from './admin/hooks/useAdminAuth.js';
 import AdminLayout from './admin/layouts/AdminLayout.jsx';
 import AccountLayout from './layouts/AccountLayout.jsx';
 import StoreLayout from './layouts/StoreLayout.jsx';
-import { getCurrentCustomer } from './services/authService.js';
+import { getCurrentCustomer, refreshCustomerSession } from './services/authService.js';
 import { clearAuthUser, selectAuth, setAuthStatus, setAuthUser } from './store/slices/authSlice.js';
 import { fetchBackendCart, switchToGuestCart } from './store/slices/cartSlice.js';
 import { fetchPublicCategories, selectCategoryStatus } from './store/slices/categorySlice.js';
 import { CHECKOUT_LOGIN_MESSAGE } from './utils/authRedirect.js';
-import { clearAuthTokens, getStoredAuthTokens, loadCartState } from './utils/storage.js';
+import { loadCartState } from './utils/storage.js';
 
 const HomePage = lazy(() => import('./pages/HomePage.jsx'));
 const ShopPage = lazy(() => import('./pages/ShopPage.jsx'));
@@ -35,6 +35,7 @@ const ProfilePage = lazy(() => import('./pages/ProfilePage.jsx'));
 const OrdersPage = lazy(() => import('./pages/OrdersPage.jsx'));
 const OrderDetailsPage = lazy(() => import('./pages/OrderDetailsPage.jsx'));
 const AddressesPage = lazy(() => import('./pages/AddressesPage.jsx'));
+const NotificationsPage = lazy(() => import('./pages/NotificationsPage.jsx'));
 const AccountWishlistPage = lazy(() => import('./pages/AccountWishlistPage.jsx'));
 const AboutPage = lazy(() => import('./pages/AboutPage.jsx'));
 const ContactPage = lazy(() => import('./pages/ContactPage.jsx'));
@@ -76,18 +77,13 @@ function App() {
 
     authInitializationStarted.current = true;
 
-    if (!auth.isAuthenticated && !getStoredAuthTokens().accessToken) {
-      dispatch(setAuthStatus('failed'));
-      dispatch(switchToGuestCart(loadCartState()));
-      return;
-    }
-
     async function initializeCustomer() {
       let finalAuthStatus = 'failed';
 
       dispatch(setAuthStatus('loading'));
 
       try {
+        await refreshCustomerSession();
         const user = await getCurrentCustomer();
         dispatch(setAuthUser(user));
         finalAuthStatus = 'succeeded';
@@ -95,7 +91,6 @@ function App() {
         // Cart data loads independently and never blocks the account icon or navigation.
         void dispatch(fetchBackendCart());
       } catch {
-        clearAuthTokens();
         dispatch(clearAuthUser());
         dispatch(switchToGuestCart(loadCartState()));
       } finally {
@@ -171,6 +166,7 @@ function App() {
             <Route path="orders" element={<OrdersPage />} />
             <Route path="orders/:orderNumber" element={<OrderDetailsPage />} />
             <Route path="addresses" element={<AddressesPage />} />
+            <Route path="notifications" element={<NotificationsPage />} />
             <Route path="wishlist" element={<AccountWishlistPage />} />
           </Route>
 
