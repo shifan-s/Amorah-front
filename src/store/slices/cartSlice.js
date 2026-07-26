@@ -77,7 +77,7 @@ function createCartItem(product, selectedSize, selectedColour, quantity, selecte
 }
 
 function toGuestMergePayload(items = []) {
-  return items
+  const normalized = items
     .filter((item) => item.productId && item.variantId && item.sizeId && item.quantity > 0)
     .map((item) => ({
       productId: item.productId,
@@ -85,6 +85,13 @@ function toGuestMergePayload(items = []) {
       sizeId: item.sizeId,
       quantity: item.quantity,
     }));
+
+  return [...normalized.reduce((unique, item) => {
+    const key = [item.productId, item.variantId, item.sizeId].join(':');
+    const existing = unique.get(key);
+    unique.set(key, existing ? { ...existing, quantity: existing.quantity + item.quantity } : item);
+    return unique;
+  }, new Map()).values()];
 }
 
 function applyBackendCart(state, cart) {
@@ -146,14 +153,14 @@ export const clearBackendCart = createAsyncThunk('cart/clearBackendCart', async 
   }
 });
 
-export const mergeGuestCart = createAsyncThunk('cart/mergeGuestCart', async (_, { getState, rejectWithValue }) => {
+export const mergeGuestCart = createAsyncThunk('cart/mergeGuestCart', async ({ accessToken, mergeId }, { getState, rejectWithValue }) => {
   try {
     const items = toGuestMergePayload(getState().cart.items);
     if (!items.length) {
       return { cart: await getBackendCart(), warnings: [] };
     }
 
-    return await mergeGuestCartRequest(items);
+    return await mergeGuestCartRequest(items, accessToken, mergeId);
   } catch (error) {
     return rejectWithValue(error);
   }

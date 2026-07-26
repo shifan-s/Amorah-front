@@ -8,9 +8,11 @@ import Container from '../components/common/Container.jsx';
 import IconButton from '../components/common/IconButton.jsx';
 import Seo from '../components/common/Seo.jsx';
 import { loginCustomer } from '../services/authService.js';
+import { refreshCustomerSession } from '../services/authService.js';
 import { setAuthUser } from '../store/slices/authSlice.js';
 import { mergeGuestCart } from '../store/slices/cartSlice.js';
 import { getSafeReturnUrl } from '../utils/authRedirect.js';
+import { saveAuthTokens } from '../utils/storage.js';
 
 function LoginPage() {
   const dispatch = useDispatch();
@@ -36,26 +38,38 @@ function LoginPage() {
 
   const submit = async (event) => {
     event.preventDefault();
-    if (!validate()) return;
+    if (submitting || !validate()) return;
 
     try {
       setSubmitting(true);
-      const user = await loginCustomer(form);
+      const session = await loginCustomer(form);
+      const { user, accessToken, refreshToken } = session;
+      saveAuthTokens({ accessToken, refreshToken }, rememberMe);
       dispatch(setAuthUser({ ...user, rememberMe }));
 
+      const mergeId = `guest-${Date.now()}-${Math.random().toString(36).slice(2)}`;
       try {
-        const result = await dispatch(mergeGuestCart()).unwrap();
-        result.warnings?.forEach((warning) => toast(warning.message));
-      } catch {
-        toast.error('Logged in, but guest cart merge failed. Your local cart is preserved.');
+        await dispatch(mergeGuestCart({ accessToken, mergeId })).unwrap();
+      } catch (firstError) {
+        try {
+          let retryAccessToken = accessToken;
+          if (firstError?.status === 401) {
+            const refreshed = await refreshCustomerSession(refreshToken, rememberMe);
+            retryAccessToken = refreshed.accessToken;
+          }
+          await dispatch(mergeGuestCart({ accessToken: retryAccessToken, mergeId })).unwrap();
+        } catch {
+          // The Redux cart remains in guest mode, so localStorage is intentionally preserved.
+        }
       }
 
-      toast.success('Logged in');
+      toast.success('Logged in successfully');
       const queryReturnUrl = new URLSearchParams(location.search).get('redirect');
       const returnUrl = getSafeReturnUrl(location.state?.from || queryReturnUrl, '/');
       navigate(returnUrl, { replace: true });
     } catch (error) {
-      toast.error(error.message || 'Unable to login');
+      const message = error.status === 401 ? 'Incorrect email or password.' : 'Unable to log in. Please try again.';
+      toast.error(message);
     } finally {
       setSubmitting(false);
     }

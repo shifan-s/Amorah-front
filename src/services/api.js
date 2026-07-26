@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getStoredAuthTokens } from '../utils/storage.js';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api',
@@ -7,6 +8,14 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+});
+
+api.interceptors.request.use((config) => {
+  const accessToken = getStoredAuthTokens().accessToken;
+  if (accessToken && !config.headers.Authorization) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
+  }
+  return config;
 });
 
 export function normalizeApiError(error, fallback = 'Unable to complete request') {

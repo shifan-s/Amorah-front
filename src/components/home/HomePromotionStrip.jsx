@@ -156,7 +156,7 @@ function HomePromotionStrip() {
                   {/* Mobile fade */}
                   <span
                     aria-hidden="true"
-                    className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-[#fff4e5] to-transparent sm:hidden"
+                    className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-[#f5b51b] via-[#ffc21c]/70 to-transparent sm:hidden"
                   />
 
                   {/* Tablet fade */}

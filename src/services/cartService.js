@@ -80,15 +80,32 @@ export function clearBackendCart() {
   return requestCart(() => api.delete('/cart'), 'Unable to clear cart');
 }
 
-export async function mergeGuestCart(items) {
+export async function mergeGuestCart(items, accessToken, mergeId) {
   try {
-    const response = await api.post('/cart/merge', { items });
+    if (import.meta.env.DEV) {
+      console.debug('Cart merge request', { items, mergeId });
+    }
+    const response = await api.post('/cart/merge', { items, mergeId }, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
     const data = unwrapData(response) || {};
+    if (import.meta.env.DEV) {
+      console.debug('Cart merge response', { status: response.status, data });
+    }
     return {
       cart: normalizeBackendCart(data.cart),
       warnings: data.warnings || [],
     };
   } catch (error) {
+    if (import.meta.env.DEV) {
+      console.error('Cart merge error', {
+        status: error.response?.status || 0,
+        details: error.response?.data || error.message,
+      });
+    }
     throw normalizeApiError(error, 'Unable to merge guest cart');
   }
 }

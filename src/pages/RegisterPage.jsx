@@ -9,6 +9,7 @@ import { registerCustomer } from '../services/authService.js';
 import { setAuthUser } from '../store/slices/authSlice.js';
 import { mergeGuestCart } from '../store/slices/cartSlice.js';
 import { getSafeReturnUrl } from '../utils/authRedirect.js';
+import { saveAuthTokens } from '../utils/storage.js';
 
 function RegisterPage() {
   const dispatch = useDispatch();
@@ -41,23 +42,25 @@ function RegisterPage() {
 
   const submit = async (event) => {
     event.preventDefault();
-    if (!validate()) return;
+    if (submitting || !validate()) return;
 
     try {
       setSubmitting(true);
-      const user = await registerCustomer({
+      const session = await registerCustomer({
         fullName: form.fullName,
         email: form.email,
         mobile: form.mobile,
         password: form.password,
       });
+      const { user, accessToken, refreshToken } = session;
+      saveAuthTokens({ accessToken, refreshToken });
       dispatch(setAuthUser(user));
 
       try {
-        const result = await dispatch(mergeGuestCart()).unwrap();
-        result.warnings?.forEach((warning) => toast(warning.message));
+        const mergeId = `guest-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        await dispatch(mergeGuestCart({ accessToken, mergeId })).unwrap();
       } catch {
-        toast.error('Account created, but guest cart merge failed. Your local cart is preserved.');
+        // Keep guest items in localStorage for a later sync.
       }
 
       toast.success('Account created');

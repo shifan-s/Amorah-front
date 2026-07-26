@@ -3,6 +3,7 @@ const STORAGE_KEYS = {
   wishlist: 'amorah_wishlist',
   recentlyViewed: 'amorah_recently_viewed',
   auth: 'amorah_auth',
+  tokens: 'amorah_tokens',
 };
 
 function canUseStorage() {
@@ -176,4 +177,44 @@ export function saveAuthState(state) {
   }
 
   writeJson(STORAGE_KEYS.auth, { user: state.user });
+}
+
+export function loadAuthTokens() {
+  const stored = readJson(STORAGE_KEYS.tokens);
+  return {
+    accessToken: typeof stored?.accessToken === 'string' ? stored.accessToken : '',
+    refreshToken: typeof stored?.refreshToken === 'string' ? stored.refreshToken : '',
+  };
+}
+
+export function saveAuthTokens(tokens, rememberMe = true) {
+  const value = {
+    accessToken: String(tokens?.accessToken || ''),
+    refreshToken: String(tokens?.refreshToken || ''),
+  };
+
+  if (rememberMe) {
+    writeJson(STORAGE_KEYS.tokens, value);
+  } else if (typeof window !== 'undefined') {
+    window.sessionStorage.setItem(STORAGE_KEYS.tokens, JSON.stringify(value));
+    window.localStorage.removeItem(STORAGE_KEYS.tokens);
+  }
+}
+
+export function clearAuthTokens() {
+  if (typeof window === 'undefined') return;
+  window.localStorage.removeItem(STORAGE_KEYS.tokens);
+  window.sessionStorage.removeItem(STORAGE_KEYS.tokens);
+}
+
+export function getStoredAuthTokens() {
+  if (typeof window !== 'undefined') {
+    try {
+      const sessionValue = window.sessionStorage.getItem(STORAGE_KEYS.tokens);
+      if (sessionValue) return JSON.parse(sessionValue);
+    } catch {
+      // Fall back to local storage.
+    }
+  }
+  return loadAuthTokens();
 }

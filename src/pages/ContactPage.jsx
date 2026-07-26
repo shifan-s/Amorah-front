@@ -26,19 +26,28 @@ const initialForm = {
 };
 
 const contactSettings = {
-  email: import.meta.env.VITE_AMORAH_SUPPORT_EMAIL || import.meta.env.VITE_SUPPORT_EMAIL || '',
-  phone: import.meta.env.VITE_AMORAH_BUSINESS_PHONE || import.meta.env.VITE_BUSINESS_PHONE || '',
+  email: import.meta.env.VITE_AMORAH_SUPPORT_EMAIL || import.meta.env.VITE_SUPPORT_EMAIL || 'contact@amorah.online',
+  phone: import.meta.env.VITE_AMORAH_BUSINESS_PHONE || import.meta.env.VITE_BUSINESS_PHONE || '+918089693140',
   businessHours: import.meta.env.VITE_AMORAH_BUSINESS_HOURS || import.meta.env.VITE_BUSINESS_HOURS || '',
-  addressLine1: import.meta.env.VITE_AMORAH_ADDRESS_LINE_1 || import.meta.env.VITE_BUSINESS_ADDRESS_LINE_1 || '',
+  addressLine1:
+    import.meta.env.VITE_AMORAH_ADDRESS_LINE_1 ||
+    import.meta.env.VITE_BUSINESS_ADDRESS_LINE_1 ||
+    'Valanjavazhy',
   addressLine2: import.meta.env.VITE_AMORAH_ADDRESS_LINE_2 || import.meta.env.VITE_BUSINESS_ADDRESS_LINE_2 || '',
-  city: import.meta.env.VITE_AMORAH_CITY || import.meta.env.VITE_BUSINESS_CITY || '',
-  state: import.meta.env.VITE_AMORAH_STATE || import.meta.env.VITE_BUSINESS_STATE || '',
+  city: import.meta.env.VITE_AMORAH_CITY || import.meta.env.VITE_BUSINESS_CITY || 'Ambalapuzha',
+  state: import.meta.env.VITE_AMORAH_STATE || import.meta.env.VITE_BUSINESS_STATE || 'Kerala',
   postalCode: import.meta.env.VITE_AMORAH_POSTAL_CODE || import.meta.env.VITE_BUSINESS_POSTAL_CODE || '',
   country: import.meta.env.VITE_AMORAH_COUNTRY || import.meta.env.VITE_BUSINESS_COUNTRY || '',
   mapUrl: import.meta.env.VITE_AMORAH_MAP_URL || import.meta.env.VITE_BUSINESS_MAP_URL || '',
-  whatsappUrl: import.meta.env.VITE_AMORAH_WHATSAPP_URL || import.meta.env.VITE_WHATSAPP_URL || '',
+  whatsappUrl:
+    import.meta.env.VITE_AMORAH_WHATSAPP_URL ||
+    import.meta.env.VITE_WHATSAPP_URL ||
+    'https://www.instagram.com/amorahonline/',
   whatsappNumber: import.meta.env.VITE_AMORAH_WHATSAPP_NUMBER || import.meta.env.VITE_WHATSAPP_NUMBER || '',
-  instagramUrl: import.meta.env.VITE_AMORAH_INSTAGRAM_URL || import.meta.env.VITE_INSTAGRAM_URL || '',
+  instagramUrl:
+    import.meta.env.VITE_AMORAH_INSTAGRAM_URL ||
+    import.meta.env.VITE_INSTAGRAM_URL ||
+    'https://www.instagram.com/amorahonline/',
   facebookUrl: import.meta.env.VITE_AMORAH_FACEBOOK_URL || import.meta.env.VITE_FACEBOOK_URL || '',
 };
 

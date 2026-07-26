@@ -1,20 +1,34 @@
 import api, { normalizeApiError, unwrapData } from './api.js';
+import { clearAuthTokens, saveAuthTokens } from '../utils/storage.js';
 
 let currentCustomerRequest = null;
 
 export async function loginCustomer(payload) {
   try {
     const response = await api.post('/auth/login', payload);
-    return unwrapData(response)?.user;
+    return unwrapData(response);
   } catch (error) {
     throw normalizeApiError(error, 'Unable to login');
+  }
+}
+
+export async function refreshCustomerSession(refreshToken, rememberMe = true) {
+  try {
+    const response = await api.post('/auth/refresh', { refreshToken }, {
+      headers: { Authorization: undefined },
+    });
+    const session = unwrapData(response);
+    saveAuthTokens(session, rememberMe);
+    return session;
+  } catch (error) {
+    throw normalizeApiError(error, 'Unable to refresh session');
   }
 }
 
 export async function registerCustomer(payload) {
   try {
     const response = await api.post('/auth/register', payload);
-    return unwrapData(response)?.user;
+    return unwrapData(response);
   } catch (error) {
     throw normalizeApiError(error, 'Unable to create account');
   }
@@ -39,6 +53,7 @@ export async function getCurrentCustomer() {
 export async function logoutCustomer() {
   try {
     await api.post('/auth/logout');
+    clearAuthTokens();
   } catch (error) {
     throw normalizeApiError(error, 'Unable to logout');
   }
