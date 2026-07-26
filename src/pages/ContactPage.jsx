@@ -15,6 +15,7 @@ import toast from 'react-hot-toast';
 import Container from '../components/common/Container.jsx';
 import Seo from '../components/common/Seo.jsx';
 import contactAmorahImage from '../assets/images/contactamo.jpeg';
+import api from '../services/api.js';
 
 const initialForm = {
   name: '',
@@ -229,9 +230,8 @@ function ContactPage() {
     setIsSubmitting(true);
 
     try {
-  
-
-      toast.success('Thank you. Your enquiry is ready to be connected to the backend.');
+      await api.post('/contact/enquiries', form);
+      toast.success('Thank you. Your enquiry has been sent to Amorah.');
       setForm(initialForm);
       setErrors({});
     } catch (error) {
