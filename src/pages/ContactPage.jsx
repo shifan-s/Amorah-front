@@ -291,9 +291,9 @@ function ContactPage() {
                     <div className="border-y border-amorah-border">
                       <ContactDetail
                         icon={<FiMapPin aria-hidden="true" />}
-                        label="Studio location"
+                        label="Shop location"
                         value={address}
-                        fallback="Studio details coming soon"
+                        fallback="Shop details coming soon"
                       />
                       <ContactDetail
                         icon={<FiMail aria-hidden="true" />}
@@ -313,7 +313,7 @@ function ContactPage() {
                         icon={<FiClock aria-hidden="true" />}
                         label="Business hours"
                         value={contactSettings.businessHours}
-                        fallback="Business hours coming soon"
+                        fallback="9:30 Am – 9:30 PM IST, Monday – Sunday"
                       />
                     </div>
 
