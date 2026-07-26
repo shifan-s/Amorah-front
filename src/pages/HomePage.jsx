@@ -7,6 +7,7 @@ import EditorialFeatureBanner from '../components/home/EditorialFeatureBanner.js
 import FeaturedProducts from '../components/home/FeaturedProducts.jsx';
 import HeroBanner from '../components/home/HeroBanner.jsx';
 import HijabFeature from '../components/home/HijabFeature.jsx';
+import HomePromotionStrip from '../components/home/HomePromotionStrip.jsx';
 import NewArrivals from '../components/home/NewArrivals.jsx';
 import ShopByStyle from '../components/home/ShopByStyle.jsx';
 import { imageAssets } from '../data/imageAssets.js';
@@ -71,6 +72,7 @@ function HomePage() {
         breadcrumbs={[{ name: 'Home', path: '/' }]}
       />
       <main className="bg-amorah-ivory text-amorah-black">
+        <HomePromotionStrip />
         <HeroBanner image={imageAssets.hero.src} alt={imageAssets.hero.alt} />
         <CategoryGrid />
         <NewArrivals products={sections.newArrivals.slice(0, 8)} loading={loading} />
