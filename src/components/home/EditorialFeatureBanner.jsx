@@ -23,8 +23,8 @@ function EditorialFeatureBanner() {
   return (
     <section className="bg-amorah-light py-16 sm:py-20 lg:py-24">
       <Container>
-        <div className="grid overflow-hidden bg-amorah-white lg:grid-cols-[1.35fr_0.85fr] lg:items-stretch">
-          <div className="min-h-[300px] overflow-hidden lg:min-h-[400px]">
+        <div className="grid overflow-hidden bg-amorah-white lg:grid-cols-[0.92fr_1fr] lg:items-stretch">
+          <div className="min-h-[280px] overflow-hidden lg:min-h-[360px]">
             <img
               src={imageAssets.editorial.ethnicCampaign.src}
               alt={imageAssets.editorial.ethnicCampaign.alt}

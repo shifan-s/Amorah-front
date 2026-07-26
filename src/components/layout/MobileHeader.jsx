@@ -1,7 +1,10 @@
-import { FiMenu, FiSearch, FiShoppingBag } from 'react-icons/fi';
+import { Link, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { FiMenu, FiSearch, FiShoppingBag, FiUser } from 'react-icons/fi';
 import PropTypes from 'prop-types';
 import BrandLogo from './BrandLogo.jsx';
 import IconButton from '../common/IconButton.jsx';
+import { selectAuth } from '../../store/slices/authSlice.js';
 
 function CountIconButton({ label, count, children, onClick }) {
   return (
@@ -30,6 +33,10 @@ CountIconButton.propTypes = {
 };
 
 function MobileHeader({ onMenuOpen, onSearchOpen, onCartOpen, cartCount = 0 }) {
+  const auth = useSelector(selectAuth);
+  const location = useLocation();
+  const isCustomer = auth.isAuthenticated && auth.user?.role === 'customer';
+
   return (
     <div className="flex items-center justify-between gap-3 bg-amorah-white px-4 py-3 lg:hidden">
       <IconButton label="Open menu" variant="ghost" size="sm" onClick={onMenuOpen}>
@@ -42,6 +49,15 @@ function MobileHeader({ onMenuOpen, onSearchOpen, onCartOpen, cartCount = 0 }) {
         <IconButton label="Open search" variant="ghost" size="sm" onClick={onSearchOpen}>
           <FiSearch aria-hidden="true" />
         </IconButton>
+        <Link
+          to={isCustomer ? '/account' : '/login'}
+          state={isCustomer ? undefined : { from: location }}
+          className="amorah-focus inline-flex h-9 w-9 items-center justify-center text-base text-amorah-black transition hover:bg-amorah-light hover:text-amorah-maroon"
+          aria-label={isCustomer ? 'View account' : 'Login'}
+          title={isCustomer ? 'View account' : 'Login'}
+        >
+          <FiUser aria-hidden="true" />
+        </Link>
         <CountIconButton label="Open cart" count={cartCount} onClick={onCartOpen}>
           <FiShoppingBag aria-hidden="true" />
         </CountIconButton>

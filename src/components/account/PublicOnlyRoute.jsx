@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import PageLoader from '../common/PageLoader.jsx';
 import { selectAuth } from '../../store/slices/authSlice.js';
 
-function PublicOnlyRoute({ children, admin = false }) {
+function PublicOnlyRoute({ children }) {
   const auth = useSelector(selectAuth);
 
   if (auth.status === 'idle' || auth.status === 'loading') {
@@ -19,12 +19,11 @@ function PublicOnlyRoute({ children, admin = false }) {
     return <Navigate to="/admin/dashboard" replace />;
   }
 
-  return <Navigate to={admin ? '/' : '/'} replace />;
+  return <Navigate to="/" replace />;
 }
 
 PublicOnlyRoute.propTypes = {
   children: PropTypes.node.isRequired,
-  admin: PropTypes.bool,
 };
 
 export default PublicOnlyRoute;

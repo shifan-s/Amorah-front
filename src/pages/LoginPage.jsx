@@ -118,7 +118,11 @@ function LoginPage() {
             </form>
             <p className="mt-6 text-center text-sm text-amorah-brown">
               New to Amorah?{' '}
-              <Link className="amorah-focus font-semibold text-amorah-black" to="/register">
+              <Link
+                className="amorah-focus font-semibold text-amorah-black"
+                to="/signup"
+                state={location.state}
+              >
                 Create an account
               </Link>
             </p>

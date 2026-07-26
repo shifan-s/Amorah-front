@@ -12,6 +12,10 @@ export function getCheckoutLoginState(from = '/checkout') {
 }
 
 export function getSafeReturnUrl(value, fallback = '/') {
+  if (value && typeof value === 'object') {
+    value = `${value.pathname || '/'}${value.search || ''}${value.hash || ''}`;
+  }
+
   if (typeof value !== 'string' || !value.startsWith('/') || value.startsWith('//')) {
     return fallback;
   }

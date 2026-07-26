@@ -159,7 +159,7 @@ function App() {
             path="/admin/login"
             element={
               <AdminAuthProvider>
-                <PublicOnlyRoute admin><AdminLoginPage /></PublicOnlyRoute>
+                <PublicOnlyRoute><AdminLoginPage /></PublicOnlyRoute>
               </AdminAuthProvider>
             }
           />
