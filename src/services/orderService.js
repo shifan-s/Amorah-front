@@ -46,3 +46,21 @@ export async function downloadOrderInvoice(orderNumber) {
     throw new Error(await readBlobError(error, 'Unable to download invoice.'));
   }
 }
+
+export async function cancelMyOrder(orderId, reason) {
+  try {
+    const response = await api.patch(`/orders/my-orders/${orderId}/cancel`, { reason });
+    return response.data;
+  } catch (error) {
+    throw normalizeApiError(error, 'Unable to cancel order');
+  }
+}
+
+export async function reportOrderIssue(orderId, payload) {
+  try {
+    const response = await api.post(`/orders/my-orders/${orderId}/issues`, payload);
+    return response.data;
+  } catch (error) {
+    throw normalizeApiError(error, 'Unable to submit issue');
+  }
+}

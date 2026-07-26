@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { FiGrid, FiLayers, FiLogOut, FiShoppingBag, FiTag, FiX } from 'react-icons/fi';
+import { FiGrid, FiLayers, FiLogOut, FiPackage, FiShoppingBag, FiTag, FiX } from 'react-icons/fi';
 import { NavLink } from 'react-router-dom';
 
 function AdminMobileMenu({ open, onClose, onLogout }) {
@@ -28,6 +28,10 @@ function AdminMobileMenu({ open, onClose, onLogout }) {
           <NavLink to="/admin" end className={itemClass} onClick={onClose}>
             <FiGrid aria-hidden="true" />
             Dashboard
+          </NavLink>
+          <NavLink to="/admin/orders" className={itemClass} onClick={onClose}>
+            <FiPackage aria-hidden="true" />
+            Orders
           </NavLink>
           <NavLink to="/admin/categories" className={itemClass} onClick={onClose}>
             <FiLayers aria-hidden="true" />

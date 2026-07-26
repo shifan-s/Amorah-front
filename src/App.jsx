@@ -53,8 +53,8 @@ const CategoryEditPage = lazy(() => import('./admin/pages/CategoryEditPage.jsx')
 const ProductListPage = lazy(() => import('./admin/pages/ProductListPage.jsx'));
 const ProductCreatePage = lazy(() => import('./admin/pages/ProductCreatePage.jsx'));
 const ProductEditPage = lazy(() => import('./admin/pages/ProductEditPage.jsx'));
-const RefundListPage = lazy(() => import('./admin/pages/RefundListPage.jsx'));
-const RefundDetailsPage = lazy(() => import('./admin/pages/RefundDetailsPage.jsx'));
+const AdminOrdersPage = lazy(() => import('./admin/pages/AdminOrdersPage.jsx'));
+const AdminOrderDetailsPage = lazy(() => import('./admin/pages/AdminOrderDetailsPage.jsx'));
 const AdminForbiddenPage = lazy(() => import('./admin/pages/AdminForbiddenPage.jsx'));
 
 function App() {
@@ -209,8 +209,8 @@ function App() {
             <Route path="products/new" element={<ProductCreatePage />} />
             <Route path="products/:productId" element={<ProductEditPage />} />
             <Route path="products/:productId/edit" element={<ProductEditPage />} />
-            <Route path="refunds" element={<RefundListPage />} />
-            <Route path="refunds/:refundId" element={<RefundDetailsPage />} />
+            <Route path="orders" element={<AdminOrdersPage />} />
+            <Route path="orders/:orderId" element={<AdminOrderDetailsPage />} />
           </Route>
 
           <Route path="*" element={<NotFoundPage />} />

@@ -1,15 +1,21 @@
 import PropTypes from 'prop-types';
-import { FiCreditCard, FiGrid, FiLayers, FiLogOut, FiShoppingBag, FiTag } from 'react-icons/fi';
+import { useEffect, useState } from 'react';
+import { FiGrid, FiLayers, FiLogOut, FiPackage, FiShoppingBag, FiTag } from 'react-icons/fi';
 import { NavLink } from 'react-router-dom';
+import { getAdminOrderStats } from '../services/adminOrderService.js';
 
 const navItems = [
   { label: 'Dashboard', to: '/admin', icon: FiGrid, end: true },
+  { label: 'Orders', to: '/admin/orders', icon: FiPackage },
   { label: 'Categories', to: '/admin/categories', icon: FiLayers },
   { label: 'Products', to: '/admin/products', icon: FiTag },
-  { label: 'Refunds', to: '/admin/refunds', icon: FiCreditCard },
 ];
 
 function AdminSidebar({ onLogout }) {
+  const [orderCount, setOrderCount] = useState(0);
+  useEffect(() => {
+    getAdminOrderStats().then((stats) => setOrderCount(stats.pendingBadge || 0)).catch(() => {});
+  }, []);
   const baseClass =
     'flex min-h-11 items-center gap-3 px-4 text-sm font-semibold outline-none transition focus-visible:ring-2 focus-visible:ring-[#672F3B]';
 
@@ -34,6 +40,9 @@ function AdminSidebar({ onLogout }) {
               >
                 <Icon aria-hidden="true" />
                 {item.label}
+                {item.label === 'Orders' && orderCount > 0 ? (
+                  <span className="ml-auto rounded-full bg-[#B9684B] px-2 py-0.5 text-xs text-white">{orderCount}</span>
+                ) : null}
               </NavLink>
             );
           })}
