@@ -11,6 +11,12 @@ const api = axios.create({
 let accessToken = '';
 let refreshPromise = null;
 
+function notifyCustomerSessionExpired() {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('amorah:customer-session-expired'));
+  }
+}
+
 export function setAccessToken(token = '') {
   accessToken = String(token || '');
 }
@@ -40,7 +46,13 @@ api.interceptors.response.use(
       try {
         refreshPromise ||= api
           .post('/auth/refresh-token', {}, { _refreshAttempted: true })
-          .then((response) => response.data?.data?.accessToken)
+          .then((response) => {
+            const refreshedToken = response.data?.data?.accessToken;
+            if (!refreshedToken) {
+              throw new Error('Refresh response did not include an access token');
+            }
+            return refreshedToken;
+          })
           .finally(() => {
             refreshPromise = null;
           });
@@ -50,7 +62,17 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch {
         setAccessToken('');
+        notifyCustomerSessionExpired();
+        return Promise.reject(error);
       }
+    }
+
+    if (
+      error.response?.status === 401 &&
+      requestUrl.startsWith('/auth/refresh')
+    ) {
+      setAccessToken('');
+      notifyCustomerSessionExpired();
     }
 
     if (error.response?.status === 401 && requestUrl.startsWith('/admin/')) {

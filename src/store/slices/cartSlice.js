@@ -37,8 +37,8 @@ const initialState = {
   warnings: [],
 };
 
-function createCartItemId(productId, variantId, selectedSize) {
-  return [productId, variantId || 'default', selectedSize].join('-');
+function createCartItemId(productId, variantId, sizeId) {
+  return [productId, variantId || 'default', sizeId || 'one-size'].join('-');
 }
 
 function createCartItem(product, selectedSize, selectedColour, quantity, selectedVariant) {
@@ -47,7 +47,11 @@ function createCartItem(product, selectedSize, selectedColour, quantity, selecte
   const selectedVariantPrimaryImage = selectedVariant?.images?.find((image) => image.isPrimary) || selectedVariant?.images?.[0];
   const colourPrimaryImage = colourVariant?.images?.find((image) => image.isPrimary) || colourVariant?.images?.[0];
   const primaryImage = selectedVariantPrimaryImage?.url || colourPrimaryImage?.url || getPrimaryVariantImage(product, selectedColour).url;
-  const itemKey = createCartItemId(product.id, selectedVariant?.id || selectedColour, selectedSize);
+  const itemKey = createCartItemId(
+    product.id,
+    selectedVariant?.id || selectedColour,
+    selectedVariant?.sizeId || selectedSize,
+  );
   const unitPrice = product.currentPrice ?? product.salePrice ?? product.regularPrice;
 
   return {

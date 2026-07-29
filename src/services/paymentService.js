@@ -2,7 +2,14 @@ import api, { normalizeApiError, unwrapData } from './api.js';
 
 export async function createRazorpayOrder(payload) {
   try {
+    console.log('Creating one Razorpay order request');
     const response = await api.post('/payments/razorpay/create-order', {
+      items: payload.items.map((item) => ({
+        productId: item.productId,
+        variantId: item.variantId,
+        sizeId: item.sizeId,
+        quantity: item.quantity,
+      })),
       shippingAddressId: payload.shippingAddressId,
       billingSameAsShipping: payload.billingSameAsShipping,
       billingAddressId: payload.billingSameAsShipping ? null : payload.billingAddressId,
@@ -10,8 +17,16 @@ export async function createRazorpayOrder(payload) {
       idempotencyKey: payload.idempotencyKey,
     });
 
-    return unwrapData(response)?.payment;
+    const payment = unwrapData(response)?.payment;
+
+    if (!payment?.razorpayOrderId || !payment?.amount) {
+      throw new Error('Create-order response did not include a valid Razorpay order');
+    }
+
+    return payment;
   } catch (error) {
+    console.error('Unable to create Razorpay order:', error);
+    console.error('Backend error:', error.response?.data);
     throw normalizeApiError(error, 'Unable to create secure payment order');
   }
 }

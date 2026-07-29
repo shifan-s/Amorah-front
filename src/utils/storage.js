@@ -76,15 +76,35 @@ export function loadCartState() {
     return { mode: 'guest', items: [] };
   }
 
-  return {
-    mode: 'guest',
-    items: stored.items.map((item) => ({
+  const mergedItems = stored.items.reduce((itemsByVariant, item) => {
+    const variantKey = [
+      item.productId,
+      item.variantId || item.selectedColour || 'default',
+      item.sizeId || item.selectedSize || 'one-size',
+    ].join(':');
+    const normalizedItem = {
       ...item,
-      itemKey: item.itemKey || item.id,
+      id: variantKey,
+      itemKey: variantKey,
       availableStock: item.availableStock ?? item.maxStock ?? 1,
       unitPrice: item.unitPrice ?? item.currentPrice ?? item.salePrice ?? item.regularPrice,
       quantity: Math.max(1, Math.floor(item.quantity)),
-    })),
+    };
+    const existingItem = itemsByVariant.get(variantKey);
+
+    if (existingItem) {
+      const maxStock = Math.max(1, normalizedItem.availableStock ?? normalizedItem.maxStock ?? 99);
+      existingItem.quantity = Math.min(maxStock, existingItem.quantity + normalizedItem.quantity);
+    } else {
+      itemsByVariant.set(variantKey, normalizedItem);
+    }
+
+    return itemsByVariant;
+  }, new Map());
+
+  return {
+    mode: 'guest',
+    items: [...mergedItems.values()],
   };
 }
 

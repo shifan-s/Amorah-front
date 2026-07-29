@@ -126,11 +126,22 @@ function CartPage() {
                       item={item}
                       maxStock={maxStock}
                       updating={updatingItemId === item.id}
-                      onQuantityChange={(quantity) =>
-                        mode === 'authenticated'
-                          ? dispatch(updateBackendCartItem({ itemId: item.id, quantity }))
-                          : dispatch(updateCartItemQuantity({ itemId: item.id, quantity, maxStock }))
-                      }
+                      onQuantityChange={(quantity) => {
+                        if (quantity === 0) {
+                          if (mode === 'authenticated') {
+                            dispatch(removeBackendCartItem(item.id));
+                          } else {
+                            dispatch(removeFromCart(item.id));
+                          }
+                          return;
+                        }
+
+                        if (mode === 'authenticated') {
+                          dispatch(updateBackendCartItem({ itemId: item.id, quantity }));
+                        } else {
+                          dispatch(updateCartItemQuantity({ itemId: item.id, quantity, maxStock }));
+                        }
+                      }}
                       onRemove={() => {
                         if (mode === 'authenticated') {
                           dispatch(removeBackendCartItem(item.id));

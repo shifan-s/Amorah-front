@@ -45,7 +45,13 @@ function CartItem({ item, maxStock, onQuantityChange, onRemove, compact = false,
             ) : null}
             <p className="text-xs text-amorah-brown">Line total {formatINR((available ? unitPrice : 0) * item.quantity)}</p>
           </div>
-          <QuantitySelector quantity={item.quantity} max={maxStock} onChange={onQuantityChange} disabled={updating || !available} />
+          <QuantitySelector
+            quantity={item.quantity}
+            max={maxStock}
+            onChange={onQuantityChange}
+            disabled={updating || !available}
+            removeAtZero
+          />
         </div>
 
       </div>

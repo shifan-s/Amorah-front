@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit';
 import {
   getProductBySlug,
   getProducts,
@@ -82,14 +82,25 @@ const productSlice = createSlice({
 
 export const { upsertProducts } = productSlice.actions;
 
+const emptyProducts = [];
 export const selectAllProducts = (state) => state.products.products;
-export const selectFeaturedProducts = (state) => state.products.products.filter((product) => product.featured);
-export const selectBestSellerProducts = (state) => state.products.products.filter((product) => product.bestSeller);
-export const selectNewArrivalProducts = (state) => state.products.products.filter((product) => product.newArrival);
+export const selectFeaturedProducts = createSelector(
+  [selectAllProducts],
+  (products) => products.filter((product) => product.featured),
+);
+export const selectBestSellerProducts = createSelector(
+  [selectAllProducts],
+  (products) => products.filter((product) => product.bestSeller),
+);
+export const selectNewArrivalProducts = createSelector(
+  [selectAllProducts],
+  (products) => products.filter((product) => product.newArrival),
+);
 export const selectProductBySlug = (slug) => (state) =>
   state.products.products.find((product) => product.slug === slug);
 export const selectProductStatus = (state) => state.products.status;
 export const selectProductDetailStatus = (state) => state.products.detailStatus;
-export const selectRelatedProductsBySlug = (slug) => (state) => state.products.relatedBySlug[slug] || [];
+export const selectRelatedProductsBySlug = (slug) => (state) =>
+  state.products.relatedBySlug[slug] || emptyProducts;
 
 export default productSlice.reducer;

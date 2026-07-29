@@ -143,8 +143,13 @@ function CheckoutPage() {
   const [paymentState, setPaymentState] = useState('idle');
   const [paymentMessage, setPaymentMessage] = useState('');
   const [paymentOrderNumber, setPaymentOrderNumber] = useState('');
+  const [pendingRazorpayOrderId, setPendingRazorpayOrderId] = useState('');
+  const [paymentLoading, setPaymentLoading] = useState(false);
   const idempotencyKeyRef = useRef(null);
   const checkoutOpenRef = useRef(false);
+  const paymentStartingRef = useRef(false);
+  const razorpayInstanceRef = useRef(null);
+  const verificationStartedRef = useRef(false);
   const authRedirectedRef = useRef(false);
 
   const previewTotals = preview?.summary || fallbackTotals;
@@ -156,7 +161,26 @@ function CheckoutPage() {
     (billingSameAsShipping || billingAddressId);
   const previewLoading = checkout.status === 'loading';
   const errorMessages = safeErrors(previewError);
-  const paymentBusy = ['creating', 'opening', 'waiting', 'verifying'].includes(paymentState);
+  const paymentBusy =
+    paymentLoading || ['creating', 'opening', 'waiting', 'verifying'].includes(paymentState);
+  const hasPendingPayment = Boolean(paymentOrderNumber && pendingRazorpayOrderId);
+
+  const finishPaymentAttempt = useCallback(() => {
+    paymentStartingRef.current = false;
+    razorpayInstanceRef.current = null;
+    verificationStartedRef.current = false;
+    checkoutOpenRef.current = false;
+    setPaymentLoading(false);
+  }, []);
+
+  const resetPaymentState = useCallback(() => {
+    setPaymentState('idle');
+    setPaymentMessage('');
+    setPaymentOrderNumber('');
+    setPendingRazorpayOrderId('');
+    idempotencyKeyRef.current = null;
+    finishPaymentAttempt();
+  }, [finishPaymentAttempt]);
 
   const handleUnauthorizedCheckout = useCallback(
     (error) => {
@@ -166,6 +190,7 @@ function CheckoutPage() {
 
       if (!authRedirectedRef.current) {
         authRedirectedRef.current = true;
+        resetPaymentState();
         dispatch(clearAuthUser());
         dispatch(switchToGuestCart(loadCartState()));
         toast.error(CHECKOUT_LOGIN_MESSAGE);
@@ -177,7 +202,7 @@ function CheckoutPage() {
 
       return true;
     },
-    [dispatch, location, navigate],
+    [dispatch, location, navigate, resetPaymentState],
   );
 
   const priceUpdates = useMemo(() => {
@@ -205,9 +230,10 @@ function CheckoutPage() {
 
   useEffect(() => {
     if (auth.status !== 'loading' && !auth.isAuthenticated) {
+      resetPaymentState();
       navigate('/login', { replace: true, state: getCheckoutLoginState(getLocationPath(location)) });
     }
-  }, [auth.isAuthenticated, auth.status, location, navigate]);
+  }, [auth.isAuthenticated, auth.status, location, navigate, resetPaymentState]);
 
   useEffect(() => {
     if (cartInitialized && cartItems.length === 0) {
@@ -318,6 +344,11 @@ function CheckoutPage() {
   ]);
 
   async function reconcilePaymentStatus(orderNumber) {
+    if (!orderNumber || !pendingRazorpayOrderId) {
+      resetPaymentState();
+      return null;
+    }
+
     const status = await getRazorpayPaymentStatus(orderNumber);
 
     if (status.paymentStatus === 'paid' && status.orderStatus === 'confirmed') {
@@ -326,8 +357,12 @@ function CheckoutPage() {
       return status;
     }
 
-    setPaymentState(status.paymentStatus === 'failed' ? 'failed' : 'processing');
-    setPaymentMessage(status.message || 'Your payment is being processed.');
+    if (status.paymentStatus === 'pending') {
+      setPaymentState('processing');
+      setPaymentMessage(status.message || 'Your payment is being processed.');
+    } else {
+      resetPaymentState();
+    }
     return status;
   }
 
@@ -342,28 +377,43 @@ function CheckoutPage() {
       return;
     }
 
-    setPaymentState(order.paymentStatus === 'failed' ? 'failed' : 'processing');
-    setPaymentMessage(order.message || 'Your payment is being processed.');
+    if (order.paymentStatus === 'pending' && hasPendingPayment) {
+      setPaymentState('processing');
+      setPaymentMessage(order.message || 'Your payment is being processed.');
+      return;
+    }
+
+    resetPaymentState();
   }
 
   async function handlePayment(event) {
     event.preventDefault();
 
-    if (paymentBusy || checkoutOpenRef.current) {
+    if (
+      paymentStartingRef.current ||
+      razorpayInstanceRef.current ||
+      checkoutOpenRef.current
+    ) {
       return;
     }
 
+    paymentStartingRef.current = true;
+    setPaymentLoading(true);
+
     if (!preview) {
+      finishPaymentAttempt();
       toast.error('Please wait for the secure checkout preview to load.');
       return;
     }
 
     if (!shippingAddressId || (!billingSameAsShipping && !billingAddressId)) {
+      finishPaymentAttempt();
       toast.error('Please select your checkout address.');
       return;
     }
 
     if (!policyAccepted) {
+      finishPaymentAttempt();
       toast.error('Please accept the cancellation, return and refund policy.');
       return;
     }
@@ -378,22 +428,48 @@ function CheckoutPage() {
       setPaymentState('creating');
       setPaymentMessage('Creating secure Razorpay order...');
       paymentConfig = await createRazorpayOrder({
+        items: cartItems,
         shippingAddressId,
         billingSameAsShipping,
         billingAddressId,
         customerNotes,
         idempotencyKey: idempotencyKeyRef.current,
       });
+
+      const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID;
+      console.log('Razorpay order ID:', paymentConfig?.razorpayOrderId);
+
+      if (!razorpayKey) {
+        throw new Error('VITE_RAZORPAY_KEY_ID is missing from the frontend environment');
+      }
+
+      if (
+        !paymentConfig?.razorpayOrderId?.startsWith('order_') ||
+        !Number.isInteger(paymentConfig?.amount) ||
+        paymentConfig.amount <= 0
+      ) {
+        throw new Error('The backend returned an invalid Razorpay order');
+      }
+
       setPaymentOrderNumber(paymentConfig.orderNumber);
+      setPendingRazorpayOrderId(paymentConfig.razorpayOrderId);
 
       setPaymentState('opening');
       setPaymentMessage('Opening Razorpay Checkout...');
-      const Razorpay = await loadRazorpayCheckout();
-      checkoutOpenRef.current = true;
+      await loadRazorpayCheckout();
+
+      if (!window.Razorpay) {
+        throw new Error('Razorpay Checkout script failed to load');
+      }
+
+      if (razorpayInstanceRef.current) {
+        return;
+      }
+
       let handlerCompleted = false;
 
-      const razorpay = new Razorpay({
-        key: paymentConfig.keyId,
+      const razorpay = new window.Razorpay({
+        key: razorpayKey,
         amount: paymentConfig.amount,
         currency: paymentConfig.currency,
         name: paymentConfig.companyName,
@@ -401,24 +477,44 @@ function CheckoutPage() {
         image: paymentConfig.logoUrl || undefined,
         order_id: paymentConfig.razorpayOrderId,
         prefill: paymentConfig.prefill,
+        config: {
+          display: {
+            hide: [
+              {
+                method: 'emi',
+              },
+              {
+                method: 'paylater',
+              },
+            ],
+            preferences: {
+              show_default_blocks: true,
+            },
+          },
+        },
         theme: {
           color: '#672F3B',
         },
         modal: {
           ondismiss: () => {
-            checkoutOpenRef.current = false;
+            razorpayInstanceRef.current = null;
             if (!handlerCompleted) {
-              setPaymentState('dismissed');
-              setPaymentMessage('Payment was not completed. Your cart is still available.');
+              resetPaymentState();
               toast('Payment was not completed. Your cart is still available.');
             }
           },
         },
         handler: async (response) => {
+          if (verificationStartedRef.current) {
+            return;
+          }
+
+          verificationStartedRef.current = true;
           handlerCompleted = true;
           checkoutOpenRef.current = false;
           setPaymentState('verifying');
           setPaymentMessage('Verifying your payment securely...');
+          console.log('Verifying Razorpay payment once');
 
           try {
             const order = await verifyRazorpayPayment({
@@ -433,50 +529,41 @@ function CheckoutPage() {
               return;
             }
 
-            try {
-              await reconcilePaymentStatus(paymentConfig.orderNumber);
-            } catch (statusError) {
-              if (handleUnauthorizedCheckout(statusError)) {
-                return;
-              }
-
-              setPaymentState(error.status === 408 ? 'processing' : 'failed');
-              setPaymentMessage(
-                error.status === 408
-                  ? 'Your payment is being processed. Please check status again shortly.'
-                  : error.message || 'Unable to verify payment.',
-              );
-            }
+            resetPaymentState();
+            toast.error(error.message || 'Unable to verify payment.');
+          } finally {
+            finishPaymentAttempt();
           }
         },
       });
 
+      razorpay.on('payment.failed', (response) => {
+        handlerCompleted = true;
+        console.error('Razorpay payment failed:', response?.error);
+        const reason =
+          response?.error?.description ||
+          'Payment was unsuccessful. Your cart is still available so you can try again.';
+        resetPaymentState();
+        toast.error(reason);
+      });
+
       setPaymentState('waiting');
       setPaymentMessage('Complete payment in the Razorpay window.');
+      razorpayInstanceRef.current = razorpay;
+      checkoutOpenRef.current = true;
+      console.log('Opening Razorpay Checkout now');
       razorpay.open();
     } catch (error) {
       checkoutOpenRef.current = false;
+      console.error('Unable to open Razorpay Checkout:', error);
+      console.error('Backend error:', error.response?.data);
 
       if (handleUnauthorizedCheckout(error)) {
         return;
       }
 
-      if (paymentConfig?.orderNumber) {
-        try {
-          await reconcilePaymentStatus(paymentConfig.orderNumber);
-          return;
-        } catch (statusError) {
-          if (handleUnauthorizedCheckout(statusError)) {
-            return;
-          }
-
-          // Use the original error below.
-        }
-      }
-
-      setPaymentState('failed');
-      setPaymentMessage(error.message || 'Unable to start secure payment.');
-      toast.error(error.message || 'Unable to start secure payment.');
+      resetPaymentState();
+      toast.error(error.message || error.response?.data?.message || 'Unable to open payment. Please try again.');
     }
   }
 
@@ -642,7 +729,7 @@ function CheckoutPage() {
                 {paymentMessage ? (
                   <section className="border border-amorah-border bg-amorah-white p-4 text-sm text-amorah-brown">
                     <p className="font-semibold text-amorah-black">{paymentMessage}</p>
-                    {paymentOrderNumber && ['processing', 'failed'].includes(paymentState) ? (
+                    {hasPendingPayment && paymentState === 'processing' ? (
                       <Button
                         type="button"
                         variant="outline"
@@ -654,12 +741,8 @@ function CheckoutPage() {
                               return;
                             }
 
-                            setPaymentState(error.status === 408 ? 'processing' : 'failed');
-                            setPaymentMessage(
-                              error.status === 408
-                                ? 'Your payment is being processed. Please check status again shortly.'
-                                : error.message || 'Unable to check payment status.',
-                            );
+                            resetPaymentState();
+                            toast.error(error.message || 'Unable to check payment status.');
                           })
                         }
                       >
@@ -686,7 +769,15 @@ function CheckoutPage() {
                     type="submit"
                     className="w-full"
                     loading={paymentBusy}
-                    disabled={!preview || !policyAccepted || previewLoading || Boolean(previewError) || addressStatus !== 'succeeded'}
+                    disabled={
+                      paymentLoading ||
+                      paymentStartingRef.current ||
+                      !preview ||
+                      !policyAccepted ||
+                      previewLoading ||
+                      Boolean(previewError) ||
+                      addressStatus !== 'succeeded'
+                    }
                   >
                     Pay Securely with Razorpay
                   </Button>

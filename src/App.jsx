@@ -14,6 +14,7 @@ import AccountLayout from './layouts/AccountLayout.jsx';
 import StoreLayout from './layouts/StoreLayout.jsx';
 import { getCurrentCustomer, refreshCustomerSession } from './services/authService.js';
 import { clearAuthUser, selectAuth, setAuthStatus, setAuthUser } from './store/slices/authSlice.js';
+import { resetCheckout } from './store/slices/checkoutSlice.js';
 import { fetchBackendCart, switchToGuestCart } from './store/slices/cartSlice.js';
 import { fetchPublicCategories, selectCategoryStatus } from './store/slices/categorySlice.js';
 import { CHECKOUT_LOGIN_MESSAGE } from './utils/authRedirect.js';
@@ -100,6 +101,19 @@ function App() {
 
     void initializeCustomer();
   }, [auth.isAuthenticated, dispatch]);
+
+  useEffect(() => {
+    const handleExpiredCustomerSession = () => {
+      dispatch(clearAuthUser());
+      dispatch(resetCheckout());
+      dispatch(switchToGuestCart(loadCartState()));
+    };
+
+    window.addEventListener('amorah:customer-session-expired', handleExpiredCustomerSession);
+    return () => {
+      window.removeEventListener('amorah:customer-session-expired', handleExpiredCustomerSession);
+    };
+  }, [dispatch]);
 
   return (
     <>

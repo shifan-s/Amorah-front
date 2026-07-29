@@ -8,8 +8,24 @@ export function loadRazorpayCheckout() {
   const existingScript = document.querySelector(`script[src="${razorpayScriptUrl}"]`);
 
   if (existingScript) {
+    if (existingScript.dataset.razorpayLoaded === 'true') {
+      return window.Razorpay
+        ? Promise.resolve(window.Razorpay)
+        : Promise.reject(new Error('Razorpay Checkout script failed to load'));
+    }
+
     return new Promise((resolve, reject) => {
-      existingScript.addEventListener('load', () => resolve(window.Razorpay), { once: true });
+      existingScript.addEventListener(
+        'load',
+        () => {
+          if (window.Razorpay) {
+            resolve(window.Razorpay);
+            return;
+          }
+          reject(new Error('Razorpay Checkout script failed to load'));
+        },
+        { once: true },
+      );
       existingScript.addEventListener('error', () => reject(new Error('Unable to load Razorpay Checkout')), {
         once: true,
       });
@@ -22,12 +38,13 @@ export function loadRazorpayCheckout() {
     script.async = true;
 
     script.onload = () => {
+      script.dataset.razorpayLoaded = 'true';
       if (window.Razorpay) {
         resolve(window.Razorpay);
         return;
       }
 
-      reject(new Error('Razorpay Checkout did not initialize'));
+      reject(new Error('Razorpay Checkout script failed to load'));
     };
 
     script.onerror = () => {

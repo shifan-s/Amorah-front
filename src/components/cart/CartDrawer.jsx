@@ -132,6 +132,15 @@ function CartDrawer({ open, onClose }) {
                       updating={updatingItemId === item.id}
                       compact
                       onQuantityChange={(quantity) => {
+                        if (quantity === 0) {
+                          if (mode === 'authenticated') {
+                            dispatch(removeBackendCartItem(item.id));
+                          } else {
+                            dispatch(removeFromCart(item.id));
+                          }
+                          return;
+                        }
+
                         if (mode === 'authenticated') {
                           dispatch(updateBackendCartItem({ itemId: item.id, quantity }));
                           return;

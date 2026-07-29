@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types';
 import IconButton from '../common/IconButton.jsx';
 
-function QuantitySelector({ quantity, max, onChange, disabled = false }) {
+function QuantitySelector({ quantity, max, onChange, disabled = false, removeAtZero = false }) {
   const safeMax = Math.max(1, Math.floor(Number(max) || 1));
   const safeQuantity = Math.min(safeMax, Math.max(1, Math.floor(Number(quantity) || 1)));
   const updateQuantity = (value) => {
-    onChange(Math.min(safeMax, Math.max(1, Math.floor(Number(value) || 1))));
+    const minimum = removeAtZero ? 0 : 1;
+    onChange(Math.min(safeMax, Math.max(minimum, Math.floor(Number(value) || minimum))));
   };
 
   return (
@@ -15,7 +16,7 @@ function QuantitySelector({ quantity, max, onChange, disabled = false }) {
         <IconButton
           label="Decrease quantity"
           variant="ghost"
-          disabled={disabled || safeQuantity <= 1}
+          disabled={disabled || (!removeAtZero && safeQuantity <= 1)}
           onClick={() => updateQuantity(safeQuantity - 1)}
         >
           -
@@ -49,6 +50,7 @@ QuantitySelector.propTypes = {
   max: PropTypes.number.isRequired,
   onChange: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
+  removeAtZero: PropTypes.bool,
 };
 
 export default QuantitySelector;
