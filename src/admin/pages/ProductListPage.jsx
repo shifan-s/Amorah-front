@@ -154,7 +154,7 @@ function ProductListPage() {
                 action: 'delete',
                 product,
                 title: 'Delete product permanently?',
-                message: `${product.name} and its product data will be permanently deleted and cannot be recovered. Products used in an order cannot be deleted.`,
+                message: `${product.name} and its product data will be permanently deleted and cannot be recovered. Existing orders will keep their stored purchase details.`,
               })
             }
           />

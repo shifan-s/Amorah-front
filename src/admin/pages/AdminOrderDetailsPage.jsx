@@ -6,7 +6,7 @@ import { formatINR } from '../../utils/currency.js';
 import { getAdminOrder, retryAdminOrderNotification, updateAdminOrder } from '../services/adminOrderService.js';
 
 const actionMap = {
-  new: [['confirm', 'Confirm Order'], ['cancel', 'Cancel Order']],
+  new: [['cancel', 'Cancel Order']],
   confirmed: [['pack', 'Mark as Packed'], ['cancel', 'Cancel Order']],
   packed: [['dispatch', 'Dispatch Order']],
   dispatched: [['out-for-delivery', 'Mark Out for Delivery']],
@@ -35,6 +35,12 @@ export default function AdminOrderDetailsPage() {
   return <section className="space-y-6">
     <Link to="/admin/orders" className="text-sm font-semibold text-[#672F3B]">← Back to orders</Link>
     <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-xs uppercase tracking-[.22em] text-[#672F3B]">Order details</p><h1 className="font-heading text-4xl font-semibold">{order.orderNumber}</h1><p className="mt-2 text-sm text-[#6F6259]">{new Date(order.createdAt).toLocaleString('en-IN')}</p></div><div className="flex flex-wrap gap-2">{(actionMap[order.orderStatus] || []).map(([action, text]) => <button key={action} onClick={() => setDialog(action)} className="min-h-11 bg-[#672F3B] px-4 text-sm font-semibold text-white">{text}</button>)}</div></div>
+    {order.paymentStatus === 'pending' ? (
+      <div className="border border-[#DED2C5] bg-[#FFFDF8] px-5 py-4">
+        <p className="font-semibold text-[#672F3B]">Awaiting Razorpay payment</p>
+        <p className="mt-1 text-sm text-[#6F6259]">This order will be confirmed automatically after Razorpay payment is captured and verified. The customer will then receive the order-confirmation email.</p>
+      </div>
+    ) : null}
     <div className="grid gap-6 xl:grid-cols-[1fr_22rem]"><div className="space-y-6">
       <section className="border border-[#DED2C5] bg-[#FFFDF8] p-5"><h2 className="font-heading text-2xl font-semibold">Ordered products</h2><div className="mt-4 divide-y divide-[#DED2C5]">{order.items.map((item) => <div key={`${item.sku}-${item.size}`} className="grid grid-cols-[64px_1fr_auto] gap-4 py-4">{item.productImage?.url ? <img src={item.productImage.url} alt={item.productImage.alt || item.productName} className="aspect-[3/4] w-16 object-cover" /> : <div className="aspect-[3/4] bg-[#F3ECE3]" />}<div><strong>{item.productName}</strong><p className="text-sm text-[#6F6259]">SKU {item.sku} · {item.colour} · Size {item.size} · Qty {item.quantity}</p><p className="text-sm">{formatINR(item.unitPrice)} each</p></div><strong>{formatINR(item.itemTotal)}</strong></div>)}</div></section>
       <section className="border border-[#DED2C5] bg-[#FFFDF8] p-5"><h2 className="font-heading text-2xl font-semibold">Order timeline</h2><ol className="mt-5 border-l border-[#B9684B] pl-5">{order.timeline.map((event, index) => <li key={`${event.createdAt}-${index}`} className="relative pb-6 before:absolute before:-left-[1.55rem] before:top-1 before:h-3 before:w-3 before:rounded-full before:bg-[#672F3B]"><strong>{title(event.status)}</strong><p className="text-sm text-[#6F6259]">{event.message}{event.note ? ` · ${event.note}` : ''}</p><p className="text-xs text-[#6F6259]">{new Date(event.createdAt).toLocaleString('en-IN')} · {event.changedBy}</p></li>)}</ol></section>
