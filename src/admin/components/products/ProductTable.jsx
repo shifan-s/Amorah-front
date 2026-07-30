@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { FiArchive, FiEdit2, FiExternalLink } from 'react-icons/fi';
+import { FiArchive, FiEdit2, FiExternalLink, FiTrash2 } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import AdminTable from '../AdminTable.jsx';
 import StatusBadge from '../StatusBadge.jsx';
@@ -20,7 +20,7 @@ function skuText(product) {
   return `${skus[0]} +${skus.length - 1}`;
 }
 
-function ProductTable({ products, onStatusChange, onArchive }) {
+function ProductTable({ products, onStatusChange, onArchive, onDelete }) {
   return (
     <AdminTable columns={columns}>
       {products.map((product) => {
@@ -78,6 +78,9 @@ function ProductTable({ products, onStatusChange, onArchive }) {
                 <button type="button" onClick={() => onArchive(product)} className="grid h-10 w-10 place-items-center border border-[#DED2C5] text-[#672F3B]" aria-label={`Archive ${product.name}`}>
                   <FiArchive aria-hidden="true" />
                 </button>
+                <button type="button" onClick={() => onDelete(product)} className="grid h-10 w-10 place-items-center border border-[#DED2C5] text-red-700" aria-label={`Delete ${product.name} permanently`}>
+                  <FiTrash2 aria-hidden="true" />
+                </button>
               </div>
             </td>
           </tr>
@@ -91,6 +94,7 @@ ProductTable.propTypes = {
   products: PropTypes.arrayOf(PropTypes.object).isRequired,
   onStatusChange: PropTypes.func.isRequired,
   onArchive: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
 };
 
 export default ProductTable;

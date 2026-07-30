@@ -8,7 +8,7 @@ import ConfirmDialog from '../components/ConfirmDialog.jsx';
 import ProductFilters from '../components/products/ProductFilters.jsx';
 import ProductTable from '../components/products/ProductTable.jsx';
 import { getAdminCategories } from '../services/adminCategoryService.js';
-import { archiveProduct, getProducts, getReadableApiError, updateProductStatus } from '../services/adminProductService.js';
+import { archiveProduct, deleteProduct, getProducts, getReadableApiError, updateProductStatus } from '../services/adminProductService.js';
 
 const defaultFilters = {
   search: '',
@@ -87,6 +87,9 @@ function ProductListPage() {
       if (confirm.action === 'archive') {
         await archiveProduct(confirm.product.id);
         toast.success('Product archived');
+      } else if (confirm.action === 'delete') {
+        await deleteProduct(confirm.product.id);
+        toast.success('Product deleted permanently');
       } else {
         await updateProductStatus(confirm.product.id, confirm.status);
         toast.success(confirm.status === 'active' ? 'Product activated' : 'Product moved to draft');
@@ -146,6 +149,14 @@ function ProductListPage() {
                 message: `${product.name} will disappear from the storefront. This does not permanently delete product data.`,
               })
             }
+            onDelete={(product) =>
+              setConfirm({
+                action: 'delete',
+                product,
+                title: 'Delete product permanently?',
+                message: `${product.name} and its product data will be permanently deleted and cannot be recovered. Products used in an order cannot be deleted.`,
+              })
+            }
           />
           <div className="flex flex-col gap-3 border border-[#DED2C5] bg-[#FFFDF8] p-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-[#6F6259]">
@@ -167,7 +178,7 @@ function ProductListPage() {
         open={Boolean(confirm)}
         title={confirm?.title || 'Confirm action'}
         message={confirm?.message || ''}
-        confirmLabel={confirm?.action === 'archive' ? 'Archive' : 'Confirm'}
+        confirmLabel={confirm?.action === 'archive' ? 'Archive' : confirm?.action === 'delete' ? 'Delete permanently' : 'Confirm'}
         loading={working}
         onCancel={() => setConfirm(null)}
         onConfirm={runStatusAction}

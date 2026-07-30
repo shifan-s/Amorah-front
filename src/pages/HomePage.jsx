@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Seo from '../components/common/Seo.jsx';
-import BrandBenefits from '../components/home/BrandBenefits.jsx';
 import CategoryGrid from '../components/home/CategoryGrid.jsx';
 import EditorialFeatureBanner from '../components/home/EditorialFeatureBanner.jsx';
 import FeaturedProducts from '../components/home/FeaturedProducts.jsx';
@@ -91,7 +90,6 @@ function HomePage() {
         />
         <ShopByStyle />
         <HijabFeature products={[...sections.newArrivals, ...sections.featured, ...sections.bestSellers]} />
-        <BrandBenefits />
       </main>
     </>
   );

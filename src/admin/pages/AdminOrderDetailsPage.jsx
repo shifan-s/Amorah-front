@@ -12,7 +12,7 @@ const actionMap = {
   dispatched: [['out-for-delivery', 'Mark Out for Delivery']],
   'out-for-delivery': [['deliver', 'Mark Delivered']],
 };
-const title = (value = '') => value.split(/[-_]/).map((part) => part[0]?.toUpperCase() + part.slice(1)).join(' ');
+const title = (value) => String(value || '').split(/[-_]/).map((part) => part[0]?.toUpperCase() + part.slice(1)).join(' ');
 
 export default function AdminOrderDetailsPage() {
   const { orderId } = useParams();

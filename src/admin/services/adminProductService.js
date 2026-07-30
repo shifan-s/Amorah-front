@@ -84,6 +84,11 @@ export async function updateProductStock(productId, payload) {
 }
 
 export async function archiveProduct(productId) {
-  const response = await api.delete(`/admin/products/${productId}`);
+  const response = await api.patch(`/admin/products/${productId}/archive`);
   return response.data?.data?.product;
+}
+
+export async function deleteProduct(productId) {
+  const response = await api.delete(`/admin/products/${productId}`);
+  return response.data?.data;
 }
