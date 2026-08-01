@@ -82,7 +82,7 @@ function CartPage() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-amorah-terracotta">Shopping bag</p>
-              <h1 className="mt-2 font-heading text-5xl font-semibold text-amorah-maroon sm:text-6xl">Your Amorah Bag</h1>
+              <h1 className="mt-2 font-heading text-4xl font-semibold text-amorah-maroon min-[380px]:text-5xl sm:text-6xl">Your Amorah Bag</h1>
             </div>
             <Link
               to="/shop"
@@ -107,7 +107,7 @@ function CartPage() {
             />
           ) : (
             <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_400px]">
-              <section className="border border-amorah-border bg-amorah-white px-5 sm:px-6">
+              <section className="min-w-0 border border-amorah-border bg-amorah-white px-3 min-[380px]:px-4 sm:px-6">
                 {mode === 'authenticated' ? (
                   <div className="border-b border-amorah-border py-4 text-sm text-amorah-brown">
                     Prices and availability are updated automatically.

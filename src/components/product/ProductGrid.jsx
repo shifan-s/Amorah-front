@@ -6,7 +6,7 @@ import ProductCardSkeleton from './ProductCardSkeleton.jsx';
 function ProductGrid({ products, loading = false, onClearFilters }) {
   if (loading) {
     return (
-      <div className="grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
+      <div className="grid grid-cols-1 gap-6 min-[420px]:grid-cols-2 min-[420px]:gap-4 md:grid-cols-3 md:gap-5 lg:grid-cols-4 2xl:grid-cols-5">
         {Array.from({ length: 6 }).map((_, index) => (
           <ProductCardSkeleton key={index} />
         ))}
@@ -26,7 +26,7 @@ function ProductGrid({ products, loading = false, onClearFilters }) {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
+    <div className="grid grid-cols-1 gap-8 min-[420px]:grid-cols-2 min-[420px]:gap-4 md:grid-cols-3 md:gap-5 lg:grid-cols-4 2xl:grid-cols-5">
       {products.map((product) => (
         <ProductCard key={product.id} product={product} />
       ))}

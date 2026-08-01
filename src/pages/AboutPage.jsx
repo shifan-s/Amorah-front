@@ -132,7 +132,7 @@ function AboutPage() {
 
         <Container>
           <section className="grid gap-10 py-16 sm:py-20 lg:grid-cols-[0.92fr_1fr] lg:items-center lg:gap-16 xl:py-24">
-            <figure className="overflow-hidden">
+            <figure className="order-last overflow-hidden lg:order-none">
               <img
                 src={aboutImages.story.src}
                 alt={aboutImages.story.alt}
@@ -140,7 +140,7 @@ function AboutPage() {
                 className={`aspect-[4/5] w-full object-cover ${aboutImages.story.position}`}
               />
             </figure>
-            <div className="max-w-[40rem] lg:ml-auto">
+            <div className="order-first max-w-[40rem] lg:order-none lg:ml-auto">
               <span
                 className="text-sm font-semibold uppercase tracking-[0.24em] text-amorah-terracotta"
                 aria-hidden="true"
@@ -178,11 +178,7 @@ function AboutPage() {
         <section className="border-y border-amorah-border/80 bg-amorah-light/70">
           <Container className="py-16 sm:py-20 xl:py-24">
             <div className="grid gap-8 lg:grid-cols-[0.34fr_1fr] lg:items-start">
-              <div>
-                <div className="flex items-center gap-4 text-xs font-semibold uppercase tracking-[0.24em] text-amorah-terracotta">
-                  <span aria-hidden="true">02</span>
-                  <span className="hidden h-px flex-1 bg-amorah-border sm:block" aria-hidden="true" />
-                </div>
+              <div className="order-last lg:order-none">
                 <figure className="mt-8 overflow-hidden">
                   <img
                     src={aboutImages.philosophy.src}
@@ -192,7 +188,11 @@ function AboutPage() {
                   />
                 </figure>
               </div>
-              <article className="border-l border-amorah-maroon/35 pl-6 sm:pl-10 lg:pl-14">
+              <article className="order-first border-l border-amorah-maroon/35 pl-6 sm:pl-10 lg:order-none lg:pl-14">
+                <div className="mb-5 flex items-center gap-4 text-xs font-semibold uppercase tracking-[0.24em] text-amorah-terracotta">
+                  <span aria-hidden="true">02</span>
+                  <span className="h-px flex-1 bg-amorah-border" aria-hidden="true" />
+                </div>
                 <h2 className="max-w-[14ch] font-heading text-[clamp(2.5rem,6vw,5.25rem)] font-semibold leading-none text-amorah-maroon">
                   {ourPhilosophy.title}
                 </h2>
@@ -260,7 +260,7 @@ function AboutPage() {
 
         <section className="bg-amorah-maroon text-amorah-white">
           <Container className="grid gap-0 lg:grid-cols-[0.92fr_1fr] lg:items-stretch">
-            <figure className="min-h-[22rem] overflow-hidden lg:min-h-[34rem]">
+            <figure className="order-last min-h-[22rem] overflow-hidden lg:order-none lg:min-h-[34rem]">
               <img
                 src={aboutImages.finale.src}
                 alt={aboutImages.finale.alt}
@@ -268,7 +268,7 @@ function AboutPage() {
                 className={`h-full min-h-[22rem] w-full object-cover lg:min-h-[34rem] ${aboutImages.finale.position}`}
               />
             </figure>
-            <div className="flex items-center py-14 sm:py-16 lg:py-20 lg:pl-16">
+            <div className="order-first flex items-center py-14 sm:py-16 lg:order-none lg:py-20 lg:pl-16">
               <div className="max-w-[40rem]">
                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-amorah-beige">Amorah style</p>
                 <p className="mt-4 font-heading text-[clamp(2.6rem,6vw,5.25rem)] font-semibold leading-none text-amorah-white">

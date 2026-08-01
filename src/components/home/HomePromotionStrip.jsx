@@ -79,7 +79,7 @@ function HomePromotionStrip() {
     >
       <Container>
         {/* Both slides always have the same responsive height */}
-        <div className="relative grid min-h-[380px] w-full overflow-hidden rounded-[1.75rem] sm:min-h-[320px] sm:rounded-[2rem] md:min-h-[260px] lg:aspect-[15/2] lg:min-h-[185px]">
+        <div className="relative grid min-h-[380px] w-full overflow-hidden rounded-[1.75rem] sm:min-h-[320px] sm:rounded-[2rem] md:min-h-[260px] lg:h-[clamp(220px,15vw,280px)] lg:min-h-0">
           {/* =========================
               SLIDE 1: IMAGE OFFER
           ========================== */}
@@ -174,7 +174,7 @@ function HomePromotionStrip() {
                 <img
                   src={promotionCardImage}
                   alt="Amorah grand opening offer — shop selected items at ₹49"
-                  className="h-full w-full object-cover object-center"
+                  className="h-full w-full object-contain object-center"
                 />
 
                 <span
@@ -234,7 +234,7 @@ function HomePromotionStrip() {
               {/* Desktop right content */}
               <span
                 aria-hidden="true"
-                className="relative z-10 hidden font-promo text-8xl leading-none text-amorah-clay lg:block lg:justify-self-end"
+                className="relative z-10 hidden font-promo text-6xl leading-[0.82] text-amorah-clay lg:block lg:justify-self-end xl:text-7xl"
               >
                 Offer
               </span>

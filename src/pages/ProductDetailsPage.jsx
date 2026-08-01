@@ -139,7 +139,7 @@ function ProductDetailsPage() {
     return (
       <main className="bg-amorah-ivory py-12">
         <Container>
-          <div className="h-[42rem] animate-pulse bg-amorah-white" />
+          <div className="aspect-[4/5] max-h-[42rem] animate-pulse bg-amorah-white sm:aspect-auto sm:h-[42rem]" />
         </Container>
       </main>
     );
@@ -348,7 +348,7 @@ function ProductDetailsPage() {
       />
       <main className="bg-amorah-ivory py-8 text-amorah-black sm:py-12">
         <Container>
-          <section className="grid gap-10 lg:grid-cols-[58fr_42fr] lg:items-start">
+          <section className="grid min-w-0 gap-8 sm:gap-10 lg:grid-cols-[58fr_42fr] lg:items-start">
             <div className="space-y-5">
               <ImageGallery
                 images={galleryImages}

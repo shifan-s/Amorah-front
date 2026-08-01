@@ -38,14 +38,14 @@ function MobileHeader({ onMenuOpen, onSearchOpen, onCartOpen, cartCount = 0 }) {
   const isCustomer = auth.isAuthenticated && auth.user?.role === 'customer';
 
   return (
-    <div className="flex items-center justify-between gap-3 bg-amorah-white px-4 py-3 lg:hidden">
+    <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-1 bg-amorah-white px-3 py-3 min-[380px]:gap-3 min-[380px]:px-4 lg:hidden">
       <IconButton label="Open menu" variant="ghost" size="sm" onClick={onMenuOpen}>
         <FiMenu aria-hidden="true" />
       </IconButton>
 
-      <BrandLogo size="sm" />
+      <BrandLogo size="sm" className="min-w-0 justify-self-center [&_img]:w-24 min-[380px]:[&_img]:w-28 sm:[&_img]:w-32" />
 
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-0 min-[380px]:gap-1">
         <IconButton label="Open search" variant="ghost" size="sm" onClick={onSearchOpen}>
           <FiSearch aria-hidden="true" />
         </IconButton>

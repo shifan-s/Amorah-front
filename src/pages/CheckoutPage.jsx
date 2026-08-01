@@ -588,7 +588,7 @@ function CheckoutPage() {
                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-amorah-brown">
                   Secure checkout
                 </p>
-                <h1 className="mt-2 font-heading text-5xl font-semibold text-amorah-maroon sm:text-6xl">
+                <h1 className="mt-2 font-heading text-4xl font-semibold text-amorah-maroon min-[380px]:text-5xl sm:text-6xl">
                   Complete Your Order
                 </h1>
                 <p className="mt-3 max-w-2xl text-sm leading-6 text-amorah-brown">

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import {
   FaFacebookF,
@@ -101,8 +101,10 @@ function SocialLink({ href, label, icon }) {
 }
 
 function Footer() {
+  const { pathname } = useLocation();
   const navigationCategories = useSelector(selectNavigationCategories);
   const currentYear = new Date().getFullYear();
+  const showCustomerSupportStrip = pathname.replace(/\/+$/, '') !== '/contact';
 
   const shopLinks = navigationCategories.length
     ? [
@@ -143,28 +145,29 @@ function Footer() {
 
   return (
     <footer className="border-t border-amorah-border bg-amorah-ivory text-amorah-black">
-      {/* Customer support strip */}
-      <div className="border-b border-amorah-border">
-        <div className="mx-auto flex max-w-[1500px] flex-col gap-5 px-4 py-7 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-10 xl:px-14">
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-amorah-terracotta">
-              Customer assistance
-            </p>
+      {showCustomerSupportStrip ? (
+        <div className="border-b border-amorah-border">
+          <div className="mx-auto flex max-w-[1500px] flex-col gap-5 px-4 py-7 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-10 xl:px-14">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-amorah-terracotta">
+                Customer assistance
+              </p>
 
-            <h2 className="mt-2 font-heading text-2xl font-semibold text-amorah-maroon sm:text-3xl">
-              Need help finding the perfect style?
-            </h2>
+              <h2 className="mt-2 font-heading text-2xl font-semibold text-amorah-maroon sm:text-3xl">
+                Need help finding the perfect style?
+              </h2>
+            </div>
+
+            <Link
+              to="/contact"
+              className="amorah-focus inline-flex min-h-12 w-fit items-center justify-center gap-2 rounded-sm border border-amorah-maroon bg-amorah-maroon px-6 text-sm font-semibold text-amorah-white transition-colors duration-300 hover:border-amorah-black hover:bg-amorah-black"
+            >
+              Contact our team
+              <FiArrowUpRight aria-hidden="true" />
+            </Link>
           </div>
-
-          <Link
-            to="/contact"
-            className="amorah-focus inline-flex min-h-12 w-fit items-center justify-center gap-2 rounded-sm border border-amorah-maroon bg-amorah-maroon px-6 text-sm font-semibold text-amorah-white transition-colors duration-300 hover:border-amorah-black hover:bg-amorah-black"
-          >
-            Contact our team
-            <FiArrowUpRight aria-hidden="true" />
-          </Link>
         </div>
-      </div>
+      ) : null}
 
       {/* Main footer */}
       <div className="mx-auto grid max-w-[1500px] gap-12 px-4 py-14 sm:px-6 lg:grid-cols-[1.1fr_1.9fr] lg:gap-16 lg:px-10 lg:py-20 xl:px-14">

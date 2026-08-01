@@ -22,7 +22,7 @@ function FeaturedProducts({ title, eyebrow, description, products, linkTo = '/sh
             View all
           </Link>
         </div>
-        <div className="mt-10 grid grid-cols-2 gap-x-4 gap-y-9 md:grid-cols-3 lg:grid-cols-4">
+        <div className="mt-10 grid grid-cols-1 gap-y-9 min-[420px]:grid-cols-2 min-[420px]:gap-x-4 md:grid-cols-3 lg:grid-cols-4">
           {loading
             ? Array.from({ length: 4 }).map((_, index) => <ProductCardSkeleton key={index} />)
             : products.map((product) => <ProductCard key={product.id} product={product} />)}

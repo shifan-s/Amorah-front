@@ -11,14 +11,14 @@ function CartItem({ item, maxStock, onQuantityChange, onRemove, compact = false,
   const available = item.available !== false;
 
   return (
-    <article className={`grid gap-4 border-b border-amorah-border py-4 ${compact ? 'grid-cols-[84px_1fr]' : 'grid-cols-[96px_1fr] sm:grid-cols-[120px_1fr]'}`}>
+    <article className={`grid gap-4 border-b border-amorah-border py-4 ${compact ? 'grid-cols-[72px_minmax(0,1fr)] min-[380px]:grid-cols-[84px_minmax(0,1fr)]' : 'grid-cols-[80px_minmax(0,1fr)] min-[380px]:grid-cols-[96px_minmax(0,1fr)] sm:grid-cols-[120px_minmax(0,1fr)]'}`}>
       <Link to={`/product/${item.slug}`} className="amorah-focus block bg-amorah-light">
         <img src={item.image} alt={item.imageAlt || item.name} className="aspect-[3/4] h-full w-full object-cover" loading="lazy" onError={handleProductImageError} />
       </Link>
       <div className="min-w-0">
         <div className="flex items-start justify-between gap-3">
-          <div>
-            <Link to={`/product/${item.slug}`} className="amorah-focus font-heading text-xl font-semibold text-amorah-black hover:text-amorah-brown">
+          <div className="min-w-0">
+            <Link to={`/product/${item.slug}`} className="amorah-focus font-heading text-lg font-semibold leading-tight text-amorah-black hover:text-amorah-brown sm:text-xl">
               {item.name}
             </Link>
             <div className="mt-1 space-y-0.5 text-sm text-amorah-brown">

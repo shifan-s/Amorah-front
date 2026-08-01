@@ -24,7 +24,7 @@ function EditorialFeatureBanner() {
     <section className="bg-amorah-light py-16 sm:py-20 lg:py-24">
       <Container>
         <div className="grid overflow-hidden bg-amorah-white lg:grid-cols-[0.92fr_1fr] lg:items-stretch">
-          <div className="min-h-[280px] overflow-hidden lg:min-h-[360px]">
+          <div className="order-last min-h-[280px] overflow-hidden lg:order-none lg:min-h-[360px]">
             <img
               src={imageAssets.editorial.ethnicCampaign.src}
               alt={imageAssets.editorial.ethnicCampaign.alt}
@@ -32,7 +32,7 @@ function EditorialFeatureBanner() {
               loading="lazy"
             />
           </div>
-          <div className="flex items-center p-6 sm:p-10 lg:p-12">
+          <div className="order-first flex items-center p-6 sm:p-10 lg:order-none lg:p-12">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amorah-terracotta">The Occasion Edit</p>
               <h2 className="mt-4 font-heading text-4xl font-semibold leading-tight text-amorah-maroon sm:text-5xl">

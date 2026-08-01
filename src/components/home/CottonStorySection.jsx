@@ -14,7 +14,7 @@ function CottonStorySection() {
     <section className="bg-amorah-light py-16 sm:py-20 lg:py-24">
       <Container>
         <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-          <div className="overflow-hidden">
+          <div className="order-last overflow-hidden lg:order-none">
             <img
               src={imageAssets.editorial.cottonStory.src}
               alt={imageAssets.editorial.cottonStory.alt}
@@ -22,7 +22,7 @@ function CottonStorySection() {
               loading="lazy"
             />
           </div>
-          <div className="max-w-2xl">
+          <div className="order-first max-w-2xl lg:order-none">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amorah-terracotta">The Cotton Edit</p>
             <h2 className="mt-4 font-heading text-4xl font-semibold leading-tight text-amorah-maroon sm:text-5xl">
               Light on the Skin.

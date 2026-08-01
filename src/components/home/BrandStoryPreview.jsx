@@ -7,10 +7,10 @@ function BrandStoryPreview({ image }) {
     <section className="bg-amorah-beige py-16 sm:py-20 lg:py-24">
       <Container>
         <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-          <div className="aspect-[4/5] bg-amorah-light">
+          <div className="order-last aspect-[4/5] bg-amorah-light lg:order-none">
             <img src={image} alt="Amorah design details and feminine styling" className="h-full w-full object-cover" loading="lazy" />
           </div>
-          <div className="lg:pl-10">
+          <div className="order-first lg:order-none lg:pl-10">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amorah-terracotta">Our story</p>
             <h2 className="mt-4 font-heading text-4xl font-semibold leading-tight text-amorah-maroon sm:text-5xl">
               Clothing That Feels Like You
