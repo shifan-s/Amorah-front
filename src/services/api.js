@@ -8,9 +8,6 @@ const api = axios.create({
   baseURL: apiBaseUrl,
   withCredentials: true,
   timeout: 12000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
 });
 
 let accessToken = '';

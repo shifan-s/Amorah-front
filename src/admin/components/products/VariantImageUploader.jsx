@@ -42,6 +42,8 @@ function VariantImageUploader({ productName, variant, onUploaded, onUploadStateC
 
   const savedImageCount = variant.images?.length || 0;
   const remainingSlots = Math.max(maxImagesPerColour - savedImageCount, 0);
+  const usedPoses = new Set((variant.images || []).map((image) => image.pose));
+  const missingPoses = ['front', 'side', 'back'].filter((pose) => !usedPoses.has(pose));
 
   const selectFiles = (event) => {
     const selected = Array.from(event.target.files || []);
@@ -146,7 +148,7 @@ function VariantImageUploader({ productName, variant, onUploaded, onUploadStateC
         <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
           {previews.map((preview, index) => (
             <figure key={preview.key} className="border border-[#DED2C5] bg-white p-2">
-              <p className="mb-2 text-sm font-semibold text-[#302925]">Selected {index + 1}</p>
+              <p className="mb-2 text-sm font-semibold capitalize text-[#302925]">{missingPoses[index]} pose</p>
               <img src={preview.url} alt={preview.name} className="aspect-[3/4] w-full object-cover" />
               <figcaption className="mt-1 truncate text-xs text-[#6F6259]">{preview.name}</figcaption>
               <button

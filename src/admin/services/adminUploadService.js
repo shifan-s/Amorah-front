@@ -47,7 +47,11 @@ async function uploadProductImageBatch(files, filenamePrefix) {
     formData.append('images', file);
   });
 
-  const response = await api.post('/admin/uploads/images', formData);
+  const response = await api.post('/admin/uploads/images', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
 
   return response.data?.data?.images || [];
 }
