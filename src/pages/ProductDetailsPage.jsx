@@ -437,13 +437,11 @@ function ProductDetailsPage() {
                     onChange={setQuantity}
                     disabled={(hasSizes && !selectedSize) || (hasColourVariants && availableStock <= 0)}
                   />
-                  <div className="text-sm leading-6 text-amorah-brown sm:text-right">
-                    <p>Unit Price: <span className="font-semibold text-amorah-black">{formatINR(effectiveUnitPrice)}</span></p>
-                    <p>Quantity: <span className="font-semibold text-amorah-black">{quantity}</span></p>
-                    <p className="font-semibold text-amorah-maroon">
-                      Total Price: {formatINR(effectiveUnitPrice)} x {quantity} = {formatINR(quantityTotal)}
-                    </p>
-                    <p className="text-xs">Final checkout totals are recalculated by Amorah before payment.</p>
+                  <div className="text-sm text-amorah-brown sm:text-right">
+                    <div className="flex items-center justify-between gap-6 sm:justify-end">
+                      <span>Item subtotal</span>
+                      <strong className="text-base text-amorah-maroon">{formatINR(quantityTotal)}</strong>
+                    </div>
                   </div>
                 </div>
               </div>
