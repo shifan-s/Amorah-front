@@ -35,7 +35,7 @@ function ProductDetailsSection({ form, errors = {}, updateField, includeDiscover
             {errors.slug ? <p className="mt-2 text-sm text-amorah-error">{errors.slug}</p> : null}
           </div>
           <div>
-            <label htmlFor="sku-prefix">SKU Prefix</label>
+            <label htmlFor="sku-prefix">SKU Prefix (Optional)</label>
             <input id="sku-prefix" value={form.skuPrefix} onChange={(event) => updateField('skuPrefix', event.target.value.toUpperCase())} />
             <p className="mt-2 text-xs text-[#6F6259]">Optional internal code used before product option SKUs.</p>
           </div>

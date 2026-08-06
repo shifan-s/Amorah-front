@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   shippingAddress: null,
+  shippingAddressId: '',
   billingAddress: null,
   notes: '',
   status: 'idle',
@@ -15,6 +16,9 @@ const checkoutSlice = createSlice({
   reducers: {
     setShippingAddress(state, action) {
       state.shippingAddress = action.payload;
+    },
+    setShippingAddressId(state, action) {
+      state.shippingAddressId = action.payload;
     },
     setBillingAddress(state, action) {
       state.billingAddress = action.payload;
@@ -39,6 +43,7 @@ const checkoutSlice = createSlice({
 
 export const {
   setShippingAddress,
+  setShippingAddressId,
   setBillingAddress,
   setCheckoutNotes,
   setCheckoutStatus,

@@ -21,6 +21,7 @@ import { addBackendCartItem, addToCart } from '../store/slices/cartSlice.js';
 import { addRecentlyViewedProduct } from '../store/slices/recentlyViewedSlice.js';
 import { openDrawer } from '../store/slices/uiSlice.js';
 import { getCheckoutLoginState } from '../utils/authRedirect.js';
+import { saveBuyNowIntent } from '../utils/buyNowIntent.js';
 import { formatINR } from '../utils/currency.js';
 import {
   fetchPublicProductBySlug,
@@ -283,14 +284,28 @@ function ProductDetailsPage() {
   };
 
   const handleBuyNow = async () => {
-    if (await handleAddToCart({ openCart: false })) {
-      if (!isAuthenticated) {
-        navigate('/login', { state: getCheckoutLoginState('/checkout') });
-        return;
-      }
+    if (isOutOfStock || !validateSelection()) return;
 
-      navigate('/checkout');
+    if (!selectedVariant?.id || !selectedVariant?.sizeId) {
+      setValidationMessage('Please select an available colour and size before continuing.');
+      return;
     }
+
+    saveBuyNowIntent({
+      productId: product.id,
+      variantId: selectedVariant.id,
+      sizeId: selectedVariant.sizeId,
+      quantity,
+      selectedSize,
+      selectedColour,
+    });
+
+    if (!isAuthenticated) {
+      navigate('/login', { state: { ...getCheckoutLoginState('/checkout'), checkoutMode: 'buyNow' } });
+      return;
+    }
+
+    navigate('/checkout', { state: { checkoutMode: 'buyNow' } });
   };
 
   const stockMessage = (() => {

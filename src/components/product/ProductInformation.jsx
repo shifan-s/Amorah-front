@@ -1,6 +1,19 @@
 import PropTypes from 'prop-types';
 import Accordion from '../common/Accordion.jsx';
 
+function fabricDescription(fabric, details) {
+  const values = [fabric, details].map((value) => String(value || '').trim()).filter(Boolean);
+  if (values.length < 2) return values[0] || '';
+
+  const [fabricName, fabricDetails] = values;
+  const normalizedName = fabricName.toLowerCase();
+  const normalizedDetails = fabricDetails.toLowerCase();
+
+  if (normalizedDetails.includes(normalizedName)) return fabricDetails;
+  if (normalizedName.includes(normalizedDetails)) return fabricName;
+  return `${fabricName}. ${fabricDetails}`;
+}
+
 function ProductInformation({ product }) {
   const items = [
     {
@@ -9,7 +22,7 @@ function ProductInformation({ product }) {
     },
     product.fabric || product.fabricDetails ? {
       title: 'Fabric and Feel',
-      content: [product.fabric, product.fabricDetails].filter(Boolean).join('. '),
+      content: fabricDescription(product.fabric, product.fabricDetails),
     } : null,
     product.fit ? {
       title: 'Fit',

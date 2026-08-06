@@ -42,6 +42,8 @@ function normalizePreview(preview = {}) {
 export async function createCheckoutPreview(payload) {
   try {
     const response = await api.post('/checkout/preview', {
+      items: payload.checkoutMode === 'buyNow' ? payload.items : undefined,
+      checkoutMode: payload.checkoutMode || 'cart',
       shippingAddressId: payload.shippingAddressId,
       billingSameAsShipping: payload.billingSameAsShipping,
       billingAddressId: payload.billingSameAsShipping ? null : payload.billingAddressId,

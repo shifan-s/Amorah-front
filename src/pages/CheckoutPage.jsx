@@ -1,14 +1,16 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from '../components/common/Button.jsx';
+import Modal from '../components/common/Modal.jsx';
+import AddressForm from '../components/account/AddressForm.jsx';
 import Container from '../components/common/Container.jsx';
 import EmptyState from '../components/common/EmptyState.jsx';
 import Seo from '../components/common/Seo.jsx';
 import CheckoutOrderSummary from '../components/checkout/CheckoutOrderSummary.jsx';
 import { getCartTotals } from '../components/cart/cartTotals.js';
-import { getSavedAddresses } from '../services/addressService.js';
+import { createSavedAddress, getSavedAddresses } from '../services/addressService.js';
 import { createCheckoutPreview } from '../services/checkoutService.js';
 import {
   createRazorpayOrder,
@@ -31,6 +33,7 @@ import {
   setCheckoutStatus,
   setLastOrder,
   setShippingAddress,
+  setShippingAddressId as storeShippingAddressId,
 } from '../store/slices/checkoutSlice.js';
 import {
   CHECKOUT_LOGIN_MESSAGE,
@@ -39,7 +42,9 @@ import {
   isUnauthorizedError,
 } from '../utils/authRedirect.js';
 import { loadRazorpayCheckout } from '../utils/loadRazorpayCheckout.js';
+import { getApiErrorMessage } from '../services/api.js';
 import { loadCartState } from '../utils/storage.js';
+import { clearBuyNowIntent, loadBuyNowIntent } from '../utils/buyNowIntent.js';
 
 function formatAddress(address) {
   return [
@@ -121,19 +126,26 @@ function CheckoutPage() {
   const cartSummary = useSelector(selectCartSummary);
   const cartInitialized = useSelector((state) => state.cart.initialized);
   const checkout = useSelector(selectCheckout);
+  const buyNowIntent = useMemo(() => loadBuyNowIntent(), []);
+  const isBuyNow = Boolean(buyNowIntent);
+  const checkoutItems = useMemo(() => (isBuyNow ? [buyNowIntent.item] : cartItems), [buyNowIntent, cartItems, isBuyNow]);
   const fallbackTotals = useMemo(
     () => (cartMode === 'authenticated' ? cartSummary : getCartTotals(cartItems)),
     [cartItems, cartMode, cartSummary],
   );
   const cartSignature = useMemo(
-    () => cartItems.map((item) => `${item.productId}:${item.variantId}:${item.sizeId}:${item.quantity}`).join('|'),
-    [cartItems],
+    () => checkoutItems.map((item) => `${item.productId}:${item.variantId}:${item.sizeId}:${item.quantity}`).join('|'),
+    [checkoutItems],
   );
 
   const [addresses, setAddresses] = useState([]);
   const [addressStatus, setAddressStatus] = useState('idle');
   const [addressError, setAddressError] = useState('');
-  const [shippingAddressId, setShippingAddressId] = useState('');
+  const [shippingAddressId, setShippingAddressId] = useState(location.state?.selectedAddressId || checkout.shippingAddressId || '');
+  const [addressModalOpen, setAddressModalOpen] = useState(false);
+  const [pendingAddressId, setPendingAddressId] = useState('');
+  const [addingAddress, setAddingAddress] = useState(false);
+  const [addressSaving, setAddressSaving] = useState(false);
   const [billingSameAsShipping, setBillingSameAsShipping] = useState(true);
   const [billingAddressId, setBillingAddressId] = useState('');
   const [customerNotes, setCustomerNotes] = useState(checkout.notes || '');
@@ -153,10 +165,10 @@ function CheckoutPage() {
   const authRedirectedRef = useRef(false);
 
   const previewTotals = preview?.summary || fallbackTotals;
-  const previewItems = preview?.items || cartItems;
+  const previewItems = preview?.items || (isBuyNow ? [] : cartItems);
   const canRequestPreview =
     auth.isAuthenticated &&
-    cartItems.length > 0 &&
+    checkoutItems.length > 0 &&
     shippingAddressId &&
     (billingSameAsShipping || billingAddressId);
   const previewLoading = checkout.status === 'loading';
@@ -236,10 +248,10 @@ function CheckoutPage() {
   }, [auth.isAuthenticated, auth.status, location, navigate, resetPaymentState]);
 
   useEffect(() => {
-    if (cartInitialized && cartItems.length === 0) {
+    if (cartInitialized && cartItems.length === 0 && !isBuyNow) {
       navigate('/cart', { replace: true });
     }
-  }, [cartInitialized, cartItems.length, navigate]);
+  }, [cartInitialized, cartItems.length, isBuyNow, navigate]);
 
   useEffect(() => {
     if (!auth.isAuthenticated) {
@@ -259,9 +271,22 @@ function CheckoutPage() {
         setAddresses(items);
         setAddressStatus('succeeded');
 
-        const defaultAddress = items.find((item) => item.isDefault) || items[0];
+        if (items.length === 0) {
+          navigate('/account/addresses?returnTo=/checkout', {
+            replace: true,
+            state: { checkoutMode: isBuyNow ? 'buyNow' : 'cart' },
+          });
+          return;
+        }
+
+        const defaultAddress =
+          items.find((item) => item.id === location.state?.selectedAddressId) ||
+          items.find((item) => item.id === checkout.shippingAddressId) ||
+          items.find((item) => item.isDefault) ||
+          items.at(-1);
         if (defaultAddress) {
-          setShippingAddressId((current) => current || defaultAddress.id);
+          setShippingAddressId(defaultAddress.id);
+          dispatch(storeShippingAddressId(defaultAddress.id));
           setBillingAddressId((current) => current || defaultAddress.id);
         }
       })
@@ -281,7 +306,7 @@ function CheckoutPage() {
     return () => {
       ignore = true;
     };
-  }, [auth.isAuthenticated, handleUnauthorizedCheckout]);
+  }, [auth.isAuthenticated, dispatch, handleUnauthorizedCheckout, isBuyNow, location.state?.selectedAddressId, navigate]);
 
   useEffect(() => {
     if (!canRequestPreview) {
@@ -296,6 +321,8 @@ function CheckoutPage() {
       setPreviewError(null);
 
       createCheckoutPreview({
+        items: checkoutItems,
+        checkoutMode: isBuyNow ? 'buyNow' : 'cart',
         shippingAddressId,
         billingSameAsShipping,
         billingAddressId,
@@ -337,11 +364,42 @@ function CheckoutPage() {
     billingSameAsShipping,
     canRequestPreview,
     cartSignature,
+    checkoutItems,
     customerNotes,
     dispatch,
     handleUnauthorizedCheckout,
     shippingAddressId,
+    isBuyNow,
   ]);
+
+  const deliverHere = () => {
+    if (!pendingAddressId) return;
+    setShippingAddressId(pendingAddressId);
+    dispatch(storeShippingAddressId(pendingAddressId));
+    if (billingSameAsShipping) setBillingAddressId(pendingAddressId);
+    setAddressModalOpen(false);
+  };
+
+  const addCheckoutAddress = async (payload) => {
+    try {
+      setAddressSaving(true);
+      const created = await createSavedAddress(payload);
+      const latest = await getSavedAddresses();
+      const newAddressId = created.address?.id;
+      setAddresses(latest);
+      setPendingAddressId(newAddressId);
+      setShippingAddressId(newAddressId);
+      dispatch(storeShippingAddressId(newAddressId));
+      if (billingSameAsShipping) setBillingAddressId(newAddressId);
+      setAddingAddress(false);
+      setAddressModalOpen(false);
+      toast.success('Address saved and selected');
+    } catch (error) {
+      toast.error(error.message || 'Unable to save address');
+    } finally {
+      setAddressSaving(false);
+    }
+  };
 
   async function reconcilePaymentStatus(orderNumber) {
     if (!orderNumber || !pendingRazorpayOrderId) {
@@ -352,6 +410,7 @@ function CheckoutPage() {
     const status = await getRazorpayPaymentStatus(orderNumber);
 
     if (status.paymentStatus === 'paid' && status.orderStatus === 'confirmed') {
+      if (isBuyNow) clearBuyNowIntent();
       dispatch(fetchBackendCart());
       navigate(`/order-success/${orderNumber}`, { replace: true });
       return status;
@@ -370,6 +429,7 @@ function CheckoutPage() {
     dispatch(setLastOrder(order));
 
     if (order.paymentStatus === 'paid' && order.orderStatus === 'confirmed') {
+      if (isBuyNow) clearBuyNowIntent();
       idempotencyKeyRef.current = null;
       dispatch(fetchBackendCart());
       setPaymentState('confirmed');
@@ -428,7 +488,8 @@ function CheckoutPage() {
       setPaymentState('creating');
       setPaymentMessage('Creating secure Razorpay order...');
       paymentConfig = await createRazorpayOrder({
-        items: cartItems,
+        items: checkoutItems,
+        checkoutMode: isBuyNow ? 'buyNow' : 'cart',
         shippingAddressId,
         billingSameAsShipping,
         billingAddressId,
@@ -436,30 +497,38 @@ function CheckoutPage() {
         idempotencyKey: idempotencyKeyRef.current,
       });
 
-      const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID;
-      console.log('Razorpay order ID:', paymentConfig?.razorpayOrderId);
+      const razorpayOrder = paymentConfig?.order || {
+        id: paymentConfig?.razorpayOrderId,
+        amount: paymentConfig?.amount,
+        currency: paymentConfig?.currency,
+      };
+      const razorpayKey = paymentConfig?.keyId || import.meta.env.VITE_RAZORPAY_KEY_ID;
 
       if (!razorpayKey) {
-        throw new Error('VITE_RAZORPAY_KEY_ID is missing from the frontend environment');
+        throw new Error('Razorpay Key ID is unavailable. Please contact support.');
+      }
+
+      if (!/^rzp_(test|live)_[A-Za-z0-9]+$/.test(razorpayKey)) {
+        throw new Error('Razorpay Key ID is invalid. Please contact support.');
       }
 
       if (
-        !paymentConfig?.razorpayOrderId?.startsWith('order_') ||
-        !Number.isInteger(paymentConfig?.amount) ||
-        paymentConfig.amount <= 0
+        !razorpayOrder?.id?.startsWith('order_') ||
+        !Number.isInteger(razorpayOrder?.amount) ||
+        razorpayOrder.amount <= 0
       ) {
-        throw new Error('The backend returned an invalid Razorpay order');
+        throw new Error(paymentConfig?.message || 'Unable to create Razorpay order.');
       }
 
       setPaymentOrderNumber(paymentConfig.orderNumber);
-      setPendingRazorpayOrderId(paymentConfig.razorpayOrderId);
+      setPendingRazorpayOrderId(razorpayOrder.id);
 
       setPaymentState('opening');
       setPaymentMessage('Opening Razorpay Checkout...');
-      await loadRazorpayCheckout();
+      const loaded = await loadRazorpayCheckout();
 
-      if (!window.Razorpay) {
-        throw new Error('Razorpay Checkout script failed to load');
+      if (!loaded || !window.Razorpay) {
+        throw new Error('Razorpay Checkout could not be loaded. Check your internet connection and try again.');
       }
 
       if (razorpayInstanceRef.current) {
@@ -470,12 +539,12 @@ function CheckoutPage() {
 
       const razorpay = new window.Razorpay({
         key: razorpayKey,
-        amount: paymentConfig.amount,
-        currency: paymentConfig.currency,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency || 'INR',
         name: paymentConfig.companyName,
         description: paymentConfig.description,
         image: paymentConfig.logoUrl || undefined,
-        order_id: paymentConfig.razorpayOrderId,
+        order_id: razorpayOrder.id,
         prefill: paymentConfig.prefill,
         config: {
           display: {
@@ -514,9 +583,16 @@ function CheckoutPage() {
           checkoutOpenRef.current = false;
           setPaymentState('verifying');
           setPaymentMessage('Verifying your payment securely...');
-          console.log('Verifying Razorpay payment once');
 
           try {
+            if (
+              !response?.razorpay_order_id ||
+              !response?.razorpay_payment_id ||
+              !response?.razorpay_signature
+            ) {
+              throw new Error('Razorpay returned incomplete payment verification details.');
+            }
+
             const order = await verifyRazorpayPayment({
               orderNumber: paymentConfig.orderNumber,
               razorpay_order_id: response.razorpay_order_id,
@@ -551,24 +627,44 @@ function CheckoutPage() {
       setPaymentMessage('Complete payment in the Razorpay window.');
       razorpayInstanceRef.current = razorpay;
       checkoutOpenRef.current = true;
-      console.log('Opening Razorpay Checkout now');
       razorpay.open();
     } catch (error) {
       checkoutOpenRef.current = false;
-      console.error('Unable to open Razorpay Checkout:', error);
-      console.error('Backend error:', error.response?.data);
 
       if (handleUnauthorizedCheckout(error)) {
         return;
       }
 
       resetPaymentState();
-      toast.error(error.message || error.response?.data?.message || 'Unable to open payment. Please try again.');
+      toast.error(getApiErrorMessage(error, 'Unable to open payment. Please try again.'));
+    } finally {
+      setPaymentLoading(false);
     }
   }
 
   return (
     <>
+      <Modal
+        open={addressModalOpen}
+        title={addingAddress ? 'Add New Address' : 'Change Delivery Address'}
+        onClose={() => { setAddressModalOpen(false); setAddingAddress(false); }}
+        footer={!addingAddress ? (
+          <Button type="button" onClick={deliverHere} disabled={!pendingAddressId}>Deliver Here</Button>
+        ) : null}
+      >
+        {addingAddress ? (
+          <AddressForm status={addressSaving ? 'saving' : 'idle'} onSubmit={addCheckoutAddress} onCancel={() => setAddingAddress(false)} />
+        ) : (
+          <div className="space-y-3">
+            {addresses.map((address) => (
+              <AddressOption key={address.id} address={address} checked={pendingAddressId === address.id} name="modalShippingAddress" onChange={setPendingAddressId} />
+            ))}
+            <button type="button" className="amorah-focus font-semibold text-amorah-maroon" onClick={() => setAddingAddress(true)}>
+              + Add New Address
+            </button>
+          </div>
+        )}
+      </Modal>
       <Seo
         title="Checkout | Amorah N-ZAN Designs"
         description="Complete your Amorah checkout with saved addresses and a backend-validated Razorpay preview."
@@ -601,14 +697,15 @@ function CheckoutPage() {
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div>
                       <p className="text-xs font-semibold uppercase tracking-[0.22em] text-amorah-brown">Step 1</p>
-                      <h2 className="mt-2 font-heading text-2xl font-semibold text-amorah-black">Shipping address</h2>
+                      <h2 className="mt-2 font-heading text-2xl font-semibold text-amorah-black">Delivery Address</h2>
                     </div>
-                    <Link
-                      to="/account/addresses"
+                    <button
+                      type="button"
                       className="amorah-focus text-xs font-semibold uppercase tracking-[0.16em] text-amorah-brown hover:text-amorah-black"
+                      onClick={() => { setPendingAddressId(shippingAddressId); setAddressModalOpen(true); }}
                     >
-                      Manage addresses
-                    </Link>
+                      Change Address
+                    </button>
                   </div>
 
                   {addressStatus === 'loading' ? (
@@ -624,19 +721,17 @@ function CheckoutPage() {
                       onAction={() => navigate('/account/addresses')}
                     />
                   ) : null}
-                  {addresses.length > 0 ? (
-                    <div className="mt-5 grid gap-3">
-                      {addresses.map((address) => (
-                        <AddressOption
-                          key={address.id}
-                          address={address}
-                          checked={shippingAddressId === address.id}
-                          name="shippingAddress"
-                          onChange={setShippingAddressId}
-                        />
-                      ))}
-                    </div>
-                  ) : null}
+                  {addresses.find((address) => address.id === shippingAddressId) ? (() => {
+                    const selected = addresses.find((address) => address.id === shippingAddressId);
+                    return (
+                      <div className="mt-5 border border-amorah-maroon bg-amorah-light p-4">
+                        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-amorah-maroon">Delivering to this address</p>
+                        <p className="mt-2 font-semibold text-amorah-black">{selected.fullName} · {selected.addressType}</p>
+                        <p className="mt-1 text-sm leading-6 text-amorah-brown">{formatAddress(selected)}</p>
+                        <p className="mt-1 text-sm font-semibold text-amorah-black">+91 {selected.mobile}</p>
+                      </div>
+                    );
+                  })() : null}
                 </section>
 
                 <section className="border border-amorah-border bg-amorah-white p-5 sm:p-6">

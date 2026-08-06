@@ -55,7 +55,7 @@ function ProductBasicInfoSection({ form, errors, updateField, addTag, removeTag,
             {fieldError('slug') ? <p className="mt-2 text-sm text-amorah-error">{fieldError('slug')}</p> : null}
           </div>
           <div>
-            <label htmlFor="sku-prefix">SKU Prefix</label>
+            <label htmlFor="sku-prefix">SKU Prefix (Optional)</label>
             <input id="sku-prefix" value={form.skuPrefix} onChange={(event) => updateField('skuPrefix', event.target.value.toUpperCase())} />
           </div>
           <div>

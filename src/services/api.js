@@ -120,6 +120,15 @@ export function normalizeApiError(error, fallback = 'Unable to complete request'
   };
 }
 
+export function getApiErrorMessage(error, fallback = 'Payment could not be completed. Please try again.') {
+  return (
+    error?.response?.data?.message ||
+    error?.response?.data?.error ||
+    error?.message ||
+    fallback
+  );
+}
+
 export function unwrapData(response) {
   return response.data?.data;
 }

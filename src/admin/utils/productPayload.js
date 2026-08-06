@@ -53,17 +53,21 @@ function normalizeSizes(sizes = []) {
 }
 
 function normalizeVariants(variants = []) {
-  return variants.map((variant) => ({
-    ...(variant.id ? { _id: variant.id } : {}),
-    sku: trim(variant.sku).toUpperCase(),
-    colourName: trim(variant.colourName),
-    colourHex: trim(variant.colourHex),
-    price: Number(variant.price),
-    compareAtPrice: variant.compareAtPrice === '' || variant.compareAtPrice === null ? null : Number(variant.compareAtPrice),
-    images: normalizeImages(variant.images),
-    sizes: normalizeSizes(variant.sizes),
-    active: variant.active !== false,
-  }));
+  return variants.map((variant) => {
+    const sku = trim(variant.sku).toUpperCase();
+
+    return {
+      ...(variant.id ? { _id: variant.id } : {}),
+      ...(sku ? { sku } : {}),
+      colourName: trim(variant.colourName),
+      colourHex: trim(variant.colourHex),
+      price: Number(variant.price),
+      compareAtPrice: variant.compareAtPrice === '' || variant.compareAtPrice === null ? null : Number(variant.compareAtPrice),
+      images: normalizeImages(variant.images),
+      sizes: normalizeSizes(variant.sizes),
+      active: variant.active !== false,
+    };
+  });
 }
 
 export function buildProductPayload(form, status) {

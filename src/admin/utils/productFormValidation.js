@@ -23,8 +23,10 @@ function validateVariant(variant, index, errors, activeSubmit) {
   const colourName = String(variant.colourName || '').trim();
   const colourLabel = colourName || `Colour ${index + 1}`;
 
-  if (!sku) {
-    setError(errors, `${prefix}.sku`, 'SKU is required.');
+  if (sku && !/^[A-Z0-9]+(?:-[A-Z0-9]+)*$/.test(sku)) {
+    setError(errors, `${prefix}.sku`, 'SKU may contain only letters, numbers and hyphens.');
+  } else if (sku.length > 80) {
+    setError(errors, `${prefix}.sku`, 'SKU must be at most 80 characters.');
   }
 
   if (!colourName) {

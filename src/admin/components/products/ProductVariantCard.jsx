@@ -63,8 +63,9 @@ function ProductVariantCard({
         <div className="grid gap-5 p-4">
           <div className="grid gap-4 md:grid-cols-4">
             <div>
-              <label htmlFor={`variant-sku-${variantIndex}`}>SKU <span className="text-[#672F3B]" aria-hidden="true">*</span></label>
+              <label htmlFor={`variant-sku-${variantIndex}`}>SKU (Optional)</label>
               <input id={`variant-sku-${variantIndex}`} value={variant.sku} onChange={(event) => onUpdate(variantIndex, 'sku', event.target.value.toUpperCase())} />
+              <p className="mt-2 text-xs text-[#6F6259]">Leave blank to generate a unique SKU when saved.</p>
               {errors[`variants.${variantIndex}.sku`] ? <p className="mt-2 text-sm text-amorah-error">{errors[`variants.${variantIndex}.sku`]}</p> : null}
             </div>
             <div>

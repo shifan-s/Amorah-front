@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import AddressCard from '../components/account/AddressCard.jsx';
 import AddressForm from '../components/account/AddressForm.jsx';
@@ -13,6 +14,8 @@ import {
 } from '../services/addressService.js';
 
 function AddressesPage() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [addresses, setAddresses] = useState([]);
   const [status, setStatus] = useState('loading');
   const [savingStatus, setSavingStatus] = useState('idle');
@@ -40,12 +43,20 @@ function AddressesPage() {
     setSavingStatus('saving');
 
     try {
-      const nextAddresses = editingAddress
-        ? await updateSavedAddress(editingAddress.id, payload)
-        : await createSavedAddress(payload);
+      const created = editingAddress ? null : await createSavedAddress(payload);
+      if (editingAddress) await updateSavedAddress(editingAddress.id, payload);
+      const nextAddresses = await getSavedAddresses();
       setAddresses(nextAddresses);
       setEditingAddress(null);
       toast.success(editingAddress ? 'Address updated' : 'Address saved');
+
+      const returnTo = new URLSearchParams(location.search).get('returnTo');
+      if (!editingAddress && returnTo === '/checkout') {
+        navigate('/checkout', {
+          replace: true,
+          state: { selectedAddressId: created?.address?.id, checkoutMode: location.state?.checkoutMode },
+        });
+      }
     } catch (requestError) {
       toast.error(requestError.message || 'Unable to save address');
     } finally {
@@ -138,4 +149,3 @@ function AddressesPage() {
 }
 
 export default AddressesPage;
-
