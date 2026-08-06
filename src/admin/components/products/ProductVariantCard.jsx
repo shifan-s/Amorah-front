@@ -100,7 +100,7 @@ function ProductVariantCard({
 
           <div>
             <h4 className="font-semibold text-[#302925]">Images for This Colour</h4>
-            <p className="mt-1 text-sm text-[#6F6259]">Upload exactly three images in this order: front, side, then back. The front pose is always the main image.</p>
+            <p className="mt-1 text-sm text-[#6F6259]">Upload one to three images. The first image is used as the main image.</p>
           </div>
           <VariantImageUploader productName={form.name} variant={variant} onUploaded={(images) => onImagesUploaded(variantIndex, images)} onUploadStateChange={onUploadStateChange} />
           {errors[`variants.${variantIndex}.images`] ? <p className="text-sm text-amorah-error">{errors[`variants.${variantIndex}.images`]}</p> : null}

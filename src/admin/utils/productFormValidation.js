@@ -84,9 +84,11 @@ function validateVariant(variant, index, errors, activeSubmit) {
     if (!['front', 'side', 'back'].includes(image.pose)) setError(errors, `${imagePath}.pose`, 'Choose a valid image pose.');
   });
 
-  const poses = (variant.images || []).map((image) => image.pose);
-  if (poses.length !== 3 || new Set(poses).size !== 3 || !['front', 'side', 'back'].every((pose) => poses.includes(pose))) {
-    setError(errors, `${prefix}.images`, `Add exactly one front, side and back image for ${colourLabel}.`);
+  const imageCount = (variant.images || []).length;
+  if (imageCount > 3) {
+    setError(errors, `${prefix}.images`, `Add no more than three images for ${colourLabel}.`);
+  } else if (activeSubmit && variant.active !== false && imageCount === 0) {
+    setError(errors, `${prefix}.images`, `Add at least one image for ${colourLabel} before publishing.`);
   }
 }
 

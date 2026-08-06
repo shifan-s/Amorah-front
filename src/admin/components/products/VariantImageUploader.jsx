@@ -54,7 +54,7 @@ function VariantImageUploader({ productName, variant, onUploaded, onUploadStateC
     setUploadStatus('');
 
     if (selected.length > remainingSlots) {
-      setError('Each colour can contain only front, side and back images.');
+      setError('Each colour can contain a maximum of three images.');
       return;
     }
 
@@ -128,7 +128,7 @@ function VariantImageUploader({ productName, variant, onUploaded, onUploadStateC
     <div className="border border-[#DED2C5] bg-[#FAF6EE] p-4">
       <label htmlFor={`images-${variant.key}`}>Images for This Colour</label>
       <p className="mt-1 text-sm text-[#6F6259]">
-        Select the missing pose images in this order: front, side, back. A maximum of three images is allowed.
+        Add one to three images for this colour. Images are assigned in front, side and back order automatically.
       </p>
       <input
         ref={inputRef}
@@ -140,7 +140,7 @@ function VariantImageUploader({ productName, variant, onUploaded, onUploadStateC
         disabled={uploading || remainingSlots === 0}
       />
       {remainingSlots === 0 ? (
-        <p className="mt-2 text-sm text-[#6F6259]">Front, side and back images are complete.</p>
+        <p className="mt-2 text-sm text-[#6F6259]">The maximum of three images has been reached.</p>
       ) : (
         <p className="mt-2 text-sm text-[#6F6259]">{remainingSlots} image slots remaining for this colour.</p>
       )}

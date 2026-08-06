@@ -77,7 +77,7 @@ function ProductVariantManager({
       variants.map((variant, index) => {
         if (index !== variantIndex) return variant;
         if (variant.images.length + images.length > maxImagesPerColour) {
-          toast.error('Each colour requires exactly three pose images.');
+          toast.error('Each colour can contain a maximum of three images.');
           return variant;
         }
         const usedPoses = new Set(variant.images.map((image) => image.pose));
