@@ -6,7 +6,7 @@ import { createEmptySize, createEmptyVariant, createFormKey } from '../../utils/
 import { slugify } from '../../utils/productPayload.js';
 import ProductVariantCard from './ProductVariantCard.jsx';
 
-const maxImagesPerColour = 5;
+const maxImagesPerColour = 3;
 
 function reorder(items, index, direction) {
   const next = [...items];
@@ -77,11 +77,14 @@ function ProductVariantManager({
       variants.map((variant, index) => {
         if (index !== variantIndex) return variant;
         if (variant.images.length + images.length > maxImagesPerColour) {
-          toast.error('You can upload a maximum of 5 images for each colour.');
+          toast.error('Each colour requires exactly three pose images.');
           return variant;
         }
+        const usedPoses = new Set(variant.images.map((image) => image.pose));
+        const missingPoses = ['front', 'side', 'back'].filter((pose) => !usedPoses.has(pose));
         const mappedImages = images.map((image, imageIndex) => ({
           ...image,
+          pose: missingPoses[imageIndex],
           key: createFormKey('image'),
           sortOrder: variant.images.length + imageIndex,
           isPrimary: variant.images.length === 0 && imageIndex === 0,
@@ -164,6 +167,7 @@ function ProductVariantManager({
         ...uploadedImage,
         key: createFormKey('image'),
         alt: uploadedImage.alt || currentImage.alt,
+        pose: currentImage.pose,
         sortOrder: imageIndex,
         isPrimary: Boolean(currentImage.isPrimary),
         existing: false,

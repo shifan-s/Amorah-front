@@ -19,6 +19,7 @@ function normalizeImages(images = []) {
     .map((image, index) => ({
       ...(image.id ? { _id: image.id } : {}),
       url: trim(image.url),
+      pose: trim(image.pose).toLowerCase(),
       publicId: trim(image.publicId),
       alt: trim(image.alt),
       sortOrder: index,
@@ -57,6 +58,8 @@ function normalizeVariants(variants = []) {
     sku: trim(variant.sku).toUpperCase(),
     colourName: trim(variant.colourName),
     colourHex: trim(variant.colourHex),
+    price: Number(variant.price),
+    compareAtPrice: variant.compareAtPrice === '' || variant.compareAtPrice === null ? null : Number(variant.compareAtPrice),
     images: normalizeImages(variant.images),
     sizes: normalizeSizes(variant.sizes),
     active: variant.active !== false,

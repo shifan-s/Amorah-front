@@ -75,7 +75,8 @@ function ProductDetailsPage() {
   );
 
   const availableStock = selectedVariant?.stock || 0;
-  const effectiveUnitPrice = product?.currentPrice ?? product?.salePrice ?? product?.regularPrice ?? 0;
+  const effectiveUnitPrice = selectedColourVariant?.price ?? product?.currentPrice ?? product?.salePrice ?? product?.regularPrice ?? 0;
+  const effectiveCompareAtPrice = selectedColourVariant?.compareAtPrice ?? (product?.salePrice != null ? product?.regularPrice : null);
   const quantityTotal = effectiveUnitPrice * quantity;
   const selectedColourStock = getColourVariantStock(selectedColourVariant);
   const galleryImages = hasColourVariants
@@ -382,8 +383,8 @@ function ProductDetailsPage() {
               <h1 className="mt-3 font-heading text-4xl font-semibold leading-tight text-amorah-maroon sm:text-5xl">{product.name}</h1>
               <div className="mt-5">
                 <PriceDisplay
-                  regularPrice={product.regularPrice}
-                  salePrice={product.salePrice}
+                  regularPrice={effectiveCompareAtPrice ?? effectiveUnitPrice}
+                  salePrice={effectiveCompareAtPrice ? effectiveUnitPrice : null}
                   currentPrice={product.currentPrice}
                   discountPercentage={product.discountPercentage}
                   size="lg"

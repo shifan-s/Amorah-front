@@ -5,7 +5,7 @@ import { uploadProductImages } from '../../services/adminUploadService.js';
 import { slugify } from '../../utils/productPayload.js';
 
 const maxBytes = 5 * 1024 * 1024;
-const maxImagesPerColour = 5;
+const maxImagesPerColour = 3;
 const acceptedTypes = ['image/jpeg', 'image/png', 'image/webp'];
 const acceptedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
 
@@ -52,7 +52,7 @@ function VariantImageUploader({ productName, variant, onUploaded, onUploadStateC
     setUploadStatus('');
 
     if (selected.length > remainingSlots) {
-      setError('You can upload a maximum of 5 images for each colour.');
+      setError('Each colour can contain only front, side and back images.');
       return;
     }
 
@@ -126,7 +126,7 @@ function VariantImageUploader({ productName, variant, onUploaded, onUploadStateC
     <div className="border border-[#DED2C5] bg-[#FAF6EE] p-4">
       <label htmlFor={`images-${variant.key}`}>Images for This Colour</label>
       <p className="mt-1 text-sm text-[#6F6259]">
-        Select clear images showing this exact colour. Include front, back and detail views where available.
+        Select the missing pose images in this order: front, side, back. A maximum of three images is allowed.
       </p>
       <input
         ref={inputRef}
@@ -138,7 +138,7 @@ function VariantImageUploader({ productName, variant, onUploaded, onUploadStateC
         disabled={uploading || remainingSlots === 0}
       />
       {remainingSlots === 0 ? (
-        <p className="mt-2 text-sm text-[#6F6259]">This colour already has 5 saved images.</p>
+        <p className="mt-2 text-sm text-[#6F6259]">Front, side and back images are complete.</p>
       ) : (
         <p className="mt-2 text-sm text-[#6F6259]">{remainingSlots} image slots remaining for this colour.</p>
       )}

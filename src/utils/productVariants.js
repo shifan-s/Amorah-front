@@ -36,6 +36,7 @@ function normalizeImage(image, productName = 'Amorah product', colourName = '', 
     id: image?.id || image?._id || image?.publicId || `image-${index}`,
     url: image?.url || fallbackProductImage,
     publicId: image?.publicId || '',
+    pose: image?.pose || ['front', 'side', 'back'][index] || '',
     alt: image?.alt || (colourName ? `${productName} in ${colourName}` : productName),
     sortOrder: Number.isInteger(image?.sortOrder) ? image.sortOrder : index,
     isPrimary: Boolean(image?.isPrimary),
@@ -124,7 +125,7 @@ export function getFirstAvailableColourVariant(product) {
 
 export function getPrimaryVariantImage(product, colourName = '') {
   const colourVariant = colourName ? getColourVariant(product, colourName) : getFirstAvailableColourVariant(product);
-  const primaryImage = colourVariant?.images?.[0];
+  const primaryImage = colourVariant?.images?.find((image) => image.pose === 'front') || colourVariant?.images?.[0];
 
   if (primaryImage) {
     return primaryImage;

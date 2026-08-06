@@ -40,8 +40,9 @@ function ProductCard({ product }) {
     ? [primaryPreviewImage, ...previewImages.filter((image) => image !== primaryPreviewImage)]
     : previewImages;
   const fallbackImage = getPrimaryVariantImage(product, previewColour);
-  const displayPrice = product.currentPrice ?? product.salePrice ?? product.regularPrice;
-  const isOnSale = product.salePrice !== null && product.salePrice !== undefined && product.salePrice < product.regularPrice;
+  const displayPrice = previewColourVariant?.price ?? product.currentPrice ?? product.salePrice ?? product.regularPrice;
+  const compareAtPrice = previewColourVariant?.compareAtPrice ?? (product.salePrice != null ? product.regularPrice : null);
+  const isOnSale = compareAtPrice !== null && compareAtPrice > displayPrice;
   const requiresSelection = hasColourVariants && (getProductSizes(product).length > 1 || getProductColours(product).length > 1);
   const isOutOfStock = hasColourVariants ? getProductStock(product) <= 0 : product.inStock === false;
   const productPath = `/product/${product.slug}`;
@@ -173,7 +174,7 @@ function ProductCard({ product }) {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          {isOnSale ? <span className="text-sm text-amorah-brown line-through">{formatINR(product.regularPrice)}</span> : null}
+          {isOnSale ? <span className="text-sm text-amorah-brown line-through">{formatINR(compareAtPrice)}</span> : null}
           <span className="text-sm font-semibold text-amorah-maroon sm:text-base">{formatINR(displayPrice)}</span>
           {isOnSale ? (
             <span className="text-xs font-semibold text-amorah-terracotta">{product.discountPercentage}% off</span>

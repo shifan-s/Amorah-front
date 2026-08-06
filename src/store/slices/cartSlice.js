@@ -52,7 +52,7 @@ function createCartItem(product, selectedSize, selectedColour, quantity, selecte
     selectedVariant?.id || selectedColour,
     selectedVariant?.sizeId || selectedSize,
   );
-  const unitPrice = product.currentPrice ?? product.salePrice ?? product.regularPrice;
+  const unitPrice = selectedVariant?.price ?? colourVariant?.price ?? product.currentPrice ?? product.salePrice ?? product.regularPrice;
 
   return {
     id: itemKey,

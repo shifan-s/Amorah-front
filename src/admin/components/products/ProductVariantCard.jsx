@@ -84,9 +84,22 @@ function ProductVariantCard({
             </label>
           </div>
 
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label htmlFor={`variant-price-${variantIndex}`}>Price (INR) <span className="text-[#672F3B]" aria-hidden="true">*</span></label>
+              <input id={`variant-price-${variantIndex}`} type="number" min="0" step="1" value={variant.price} onChange={(event) => onUpdate(variantIndex, 'price', event.target.value)} />
+              {errors[`variants.${variantIndex}.price`] ? <p className="mt-2 text-sm text-amorah-error">{errors[`variants.${variantIndex}.price`]}</p> : null}
+            </div>
+            <div>
+              <label htmlFor={`variant-compare-price-${variantIndex}`}>Compare-at Price (INR)</label>
+              <input id={`variant-compare-price-${variantIndex}`} type="number" min="0" step="1" value={variant.compareAtPrice} onChange={(event) => onUpdate(variantIndex, 'compareAtPrice', event.target.value)} />
+              {errors[`variants.${variantIndex}.compareAtPrice`] ? <p className="mt-2 text-sm text-amorah-error">{errors[`variants.${variantIndex}.compareAtPrice`]}</p> : null}
+            </div>
+          </div>
+
           <div>
             <h4 className="font-semibold text-[#302925]">Images for This Colour</h4>
-            <p className="mt-1 text-sm text-[#6F6259]">Upload clear images for this exact colour. Mark the best image as Main Image.</p>
+            <p className="mt-1 text-sm text-[#6F6259]">Upload exactly three images in this order: front, side, then back. The front pose is always the main image.</p>
           </div>
           <VariantImageUploader productName={form.name} variant={variant} onUploaded={(images) => onImagesUploaded(variantIndex, images)} onUploadStateChange={onUploadStateChange} />
           {errors[`variants.${variantIndex}.images`] ? <p className="text-sm text-amorah-error">{errors[`variants.${variantIndex}.images`]}</p> : null}

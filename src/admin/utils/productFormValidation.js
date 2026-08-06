@@ -37,6 +37,13 @@ function validateVariant(variant, index, errors, activeSubmit) {
     setError(errors, `${prefix}.colourHex`, 'Use a valid hex colour.');
   }
 
+  const price = numberValue(variant.price);
+  const compareAtPrice = numberValue(variant.compareAtPrice);
+  if (price === null || Number.isNaN(price) || price < 0) setError(errors, `${prefix}.price`, 'Price must be zero or greater.');
+  if (compareAtPrice !== null && (Number.isNaN(compareAtPrice) || compareAtPrice <= price)) {
+    setError(errors, `${prefix}.compareAtPrice`, 'Compare-at price must be greater than price.');
+  }
+
   const sizeNames = new Set();
   let hasActiveSize = false;
   (variant.sizes || []).forEach((size, sizeIndex) => {
@@ -72,14 +79,12 @@ function validateVariant(variant, index, errors, activeSubmit) {
     if ((activeSubmit || variant.active !== false) && !String(image.alt || '').trim()) {
       setError(errors, `${imagePath}.alt`, 'Image alt text is required before publishing.');
     }
+    if (!['front', 'side', 'back'].includes(image.pose)) setError(errors, `${imagePath}.pose`, 'Choose a valid image pose.');
   });
 
-  if (activeSubmit && variant.active !== false && !(variant.images || []).length) {
-    setError(errors, `${prefix}.images`, `Add at least one image for ${colourLabel} before publishing.`);
-  }
-
-  if ((variant.images || []).length > 5) {
-    setError(errors, `${prefix}.images`, 'You can upload a maximum of 5 images for each colour.');
+  const poses = (variant.images || []).map((image) => image.pose);
+  if (poses.length !== 3 || new Set(poses).size !== 3 || !['front', 'side', 'back'].every((pose) => poses.includes(pose))) {
+    setError(errors, `${prefix}.images`, `Add exactly one front, side and back image for ${colourLabel}.`);
   }
 }
 
