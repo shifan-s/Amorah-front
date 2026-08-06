@@ -73,7 +73,6 @@ function HomePage() {
         <HeroBanner image={imageAssets.hero.src} alt={imageAssets.hero.alt} />
         <CategoryGrid />
         <NewArrivals products={sections.newArrivals.slice(0, 8)} loading={loading} />
-        <EditorialFeatureBanner />
         <FeaturedProducts
           eyebrow="Featured Styles"
           title="Featured Styles"
@@ -86,6 +85,7 @@ function HomePage() {
           linkTo="/shop?sort=recommended"
           loading={loading}
         />
+        <EditorialFeatureBanner />
         <ShopByStyle />
         <HijabFeature products={[...sections.newArrivals, ...sections.featured, ...sections.bestSellers]} />
       </main>
