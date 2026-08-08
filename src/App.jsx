@@ -118,10 +118,10 @@ function App() {
   return (
     <>
       <Helmet>
-        <title>Amorah </title>
+        <title>AMORAH | Premium Women's Fashion &amp; Clothing</title>
         <meta
           name="description"
-          content="Amorah  a premium women's clothing e-commerce experience."
+          content="Discover AMORAH's collection of premium women's fashion, elegant western wear and contemporary styles."
         />
       </Helmet>
       <SkipLink />

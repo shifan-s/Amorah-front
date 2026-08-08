@@ -64,8 +64,8 @@ function HomePage() {
   return (
     <>
       <Seo
-        title="Amorah | Premium Women's Clothing"
-        description="Discover premium women's clothing from Amorah : dresses, co-ord sets, kurtis, ethnic wear and new arrivals."
+        title="AMORAH | Premium Women's Fashion & Clothing"
+        description="Discover AMORAH's collection of premium women's fashion, elegant western wear and contemporary styles."
         path="/"
         breadcrumbs={[{ name: 'Home', path: '/' }]}
       />

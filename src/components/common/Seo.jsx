@@ -4,7 +4,7 @@ import amorahLogo from '../../assets/images/amorah-logo.jpg';
 import { getProductStock } from '../../utils/productVariants.js';
 
 const siteName = 'Amorah N-ZAN Designs';
-const siteUrl = (import.meta.env.VITE_PUBLIC_SITE_URL || '').replace(/\/$/, '');
+const siteUrl = (import.meta.env.VITE_PUBLIC_SITE_URL || 'https://www.amorah.online').replace(/\/$/, '');
 
 function absoluteUrl(path = '/') {
   if (path.startsWith('http')) {
