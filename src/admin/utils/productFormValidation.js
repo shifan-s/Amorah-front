@@ -112,10 +112,6 @@ export function validateProductForm(form, submitStatus = form.status) {
     setError(errors, 'shortDescription', 'Short description is required.');
   }
 
-  if (!String(form.description || '').trim()) {
-    setError(errors, 'description', 'Full description is required.');
-  }
-
   const regularPrice = numberValue(form.regularPrice);
   const salePrice = numberValue(form.salePrice);
 

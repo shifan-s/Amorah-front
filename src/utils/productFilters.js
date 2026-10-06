@@ -126,9 +126,6 @@ export function matchesSearch(product, query) {
     product.fabric,
     product.occasion,
     product.shortDescription,
-    product.description,
-    product.fabricDetails,
-    product.fit,
     ...product.tags,
   ]
     .join(' ')

@@ -62,18 +62,6 @@ function ProductDetailsSection({ form, errors = {}, updateField, includeDiscover
         </>
       ) : null}
       <div>
-        <label htmlFor="fabric-details">Fabric Details</label>
-        <textarea id="fabric-details" rows="3" value={form.fabricDetails} onChange={(event) => updateField('fabricDetails', event.target.value)} />
-      </div>
-      <div>
-        <label htmlFor="fit">Fit</label>
-        <textarea id="fit" rows="3" value={form.fit} onChange={(event) => updateField('fit', event.target.value)} />
-      </div>
-      <div className="md:col-span-2">
-        <label htmlFor="care">Care Instructions</label>
-        <textarea id="care" rows="3" value={form.careInstructions} onChange={(event) => updateField('careInstructions', event.target.value)} />
-      </div>
-      <div>
         <label htmlFor="meta-title">Search Title</label>
         <input id="meta-title" value={form.metaTitle} onChange={(event) => updateField('metaTitle', event.target.value)} />
         <p className="mt-2 text-xs text-[#6F6259]">Optional title used by search engines.</p>

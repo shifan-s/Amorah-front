@@ -111,12 +111,6 @@ function ProductBasicInfoSection({ form, errors, updateField, addTag, removeTag,
         <p className="mt-2 text-xs text-[#6F6259]">Write one or two lines for quick product highlights.</p>
         {fieldError('shortDescription') ? <p className="mt-2 text-sm text-amorah-error">{fieldError('shortDescription')}</p> : null}
       </div>
-      <div className="md:col-span-2">
-        <label htmlFor="full-description">Full Product Description<RequiredMark /></label>
-        <textarea id="full-description" rows="6" value={form.description} onChange={(event) => updateField('description', event.target.value)} />
-        <p className="mt-2 text-xs text-[#6F6259]">Share fabric, styling, fit and any details that help customers choose confidently.</p>
-        {fieldError('description') ? <p className="mt-2 text-sm text-amorah-error">{fieldError('description')}</p> : null}
-      </div>
     </section>
   );
 }

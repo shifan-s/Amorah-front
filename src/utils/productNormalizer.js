@@ -66,7 +66,6 @@ export function normalizeProduct(product = {}) {
     occasion: product.occasion || '',
     tags: product.tags || [],
     shortDescription: product.shortDescription || '',
-    description: product.description || '',
     regularPrice,
     salePrice,
     currentPrice,
@@ -85,9 +84,6 @@ export function normalizeProduct(product = {}) {
     totalStock,
     inStock: product.inStock ?? totalStock > 0,
     active: product.status ? product.status === 'active' : true,
-    fabricDetails: product.fabricDetails || '',
-    fit: product.fit || '',
-    careInstructions: product.careInstructions || '',
     createdAt: product.createdAt,
     updatedAt: product.updatedAt,
   };

@@ -10,7 +10,6 @@ import Seo from '../components/common/Seo.jsx';
 import ColourSelector from '../components/product/ColourSelector.jsx';
 import ImageGallery from '../components/product/ImageGallery.jsx';
 import PriceDisplay from '../components/product/PriceDisplay.jsx';
-import ProductInformation from '../components/product/ProductInformation.jsx';
 import QuantitySelector from '../components/product/QuantitySelector.jsx';
 import RecentlyViewedProducts from '../components/product/RecentlyViewedProducts.jsx';
 import RelatedProducts from '../components/product/RelatedProducts.jsx';
@@ -478,21 +477,9 @@ function ProductDetailsPage() {
                 <WishlistButton productId={product.id} productName={product.name} product={product} className="sm:col-span-2" />
               </div>
 
-              <div className="mt-7 border border-amorah-border bg-amorah-light p-4 text-sm leading-6 text-amorah-brown">
-                Secure online payment through Razorpay. Review{' '}
-                <Link className="amorah-focus font-semibold text-amorah-maroon hover:text-amorah-black" to="/shipping-policy">
-                  shipping
-                </Link>{' '}
-                and{' '}
-                <Link className="amorah-focus font-semibold text-amorah-maroon hover:text-amorah-black" to="/return-policy">
-                  return
-                </Link>{' '}
-                details before checkout.
-              </div>
             </div>
           </section>
 
-          <ProductInformation product={product} />
           <RelatedProducts
             title="You May Also Love"
             products={backendRelatedProducts.filter((item) => item.id !== product.id).slice(0, 8)}
