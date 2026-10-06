@@ -1,4 +1,5 @@
 import { fallbackProductImage } from './productVariants.js';
+import { getProductShippingChargeAmount } from './shipping.js';
 
 function normalizeImage(image = {}, index = 0) {
   return {
@@ -70,7 +71,7 @@ export function normalizeProduct(product = {}) {
     shortDescription: product.shortDescription || '',
     regularPrice,
     salePrice,
-    shippingChargeApplies: product.shippingChargeApplies !== false,
+    shippingChargeAmount: getProductShippingChargeAmount(product),
     currentPrice,
     isOnSale: salePrice !== null && salePrice < regularPrice,
     discountPercentage: Number(product.discountPercentage) || 0,

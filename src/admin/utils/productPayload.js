@@ -83,7 +83,7 @@ export function buildProductPayload(form, status) {
     shortDescription: trim(form.shortDescription),
     regularPrice: Number(form.regularPrice),
     salePrice: form.salePrice === '' || form.salePrice === null ? null : Number(form.salePrice),
-    shippingChargeApplies: Boolean(form.shippingChargeApplies),
+    shippingChargeAmount: Number(form.shippingChargeAmount),
     variants: normalizeVariants(form.variants),
     status,
     featured: Boolean(form.featured),

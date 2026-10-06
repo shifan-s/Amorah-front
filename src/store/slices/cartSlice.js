@@ -14,6 +14,7 @@ import {
   getProductSizes,
   getVariant,
 } from '../../utils/productVariants.js';
+import { getProductShippingChargeAmount } from '../../utils/shipping.js';
 
 const guestSummary = {
   itemCount: 0,
@@ -66,7 +67,7 @@ function createCartItem(product, selectedSize, selectedColour, quantity, selecte
     image: primaryImage,
     regularPrice: product.regularPrice,
     salePrice: product.salePrice,
-    shippingChargeApplies: product.shippingChargeApplies !== false,
+    shippingChargeAmount: getProductShippingChargeAmount(product),
     currentPrice: unitPrice,
     unitPrice,
     selectedSize,

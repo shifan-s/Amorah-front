@@ -129,6 +129,11 @@ export function validateProductForm(form, submitStatus = form.status) {
     }
   }
 
+  const shippingChargeAmount = numberValue(form.shippingChargeAmount);
+  if (shippingChargeAmount === null || !Number.isInteger(shippingChargeAmount) || shippingChargeAmount < 0) {
+    setError(errors, 'shippingChargeAmount', 'Shipping charge must be a whole rupee amount of zero or greater.');
+  }
+
   if (!Array.isArray(form.variants) || !form.variants.length) {
     setError(errors, 'variants', 'At least one colour variant is required.');
   }

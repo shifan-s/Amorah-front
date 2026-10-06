@@ -17,7 +17,7 @@ function normalizeBackendItem(item = {}) {
     imageAlt: item.image?.alt || item.name,
     regularPrice: Number(item.regularPrice) || 0,
     salePrice: item.salePrice ?? null,
-    shippingChargeApplies: item.shippingChargeApplies !== false,
+    shippingChargeAmount: Number(item.shippingChargeAmount) || 0,
     currentPrice: Number(item.unitPrice) || 0,
     unitPrice: Number(item.unitPrice) || 0,
     lineTotal: Number(item.lineTotal) || 0,
