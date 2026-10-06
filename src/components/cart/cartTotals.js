@@ -6,7 +6,8 @@ export function getCartTotals(items) {
     (total, item) => total + (item.unitPrice ?? item.currentPrice ?? item.salePrice ?? item.regularPrice) * item.quantity,
     0,
   );
-  const shipping = subtotal > 0 && subtotal < FREE_SHIPPING_THRESHOLD ? SHIPPING_FEE : 0;
+  const hasShippingCharge = items.some((item) => item.shippingChargeApplies !== false);
+  const shipping = hasShippingCharge && subtotal > 0 && subtotal < FREE_SHIPPING_THRESHOLD ? SHIPPING_FEE : 0;
   const tax = 0;
   const total = subtotal + shipping + tax;
 

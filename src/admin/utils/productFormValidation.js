@@ -41,8 +41,10 @@ function validateVariant(variant, index, errors, activeSubmit) {
 
   const price = numberValue(variant.price);
   const compareAtPrice = numberValue(variant.compareAtPrice);
-  if (price === null || Number.isNaN(price) || price < 0) setError(errors, `${prefix}.price`, 'Price must be zero or greater.');
-  if (compareAtPrice !== null && (Number.isNaN(compareAtPrice) || compareAtPrice <= price)) {
+  if (variant.hasCustomPrice && (price === null || Number.isNaN(price) || price < 0)) {
+    setError(errors, `${prefix}.price`, 'Colour selling price must be zero or greater.');
+  }
+  if (variant.hasCustomPrice && compareAtPrice !== null && (Number.isNaN(compareAtPrice) || compareAtPrice <= price)) {
     setError(errors, `${prefix}.compareAtPrice`, 'Compare-at price must be greater than price.');
   }
 

@@ -61,8 +61,8 @@ function normalizeVariants(variants = []) {
       ...(sku ? { sku } : {}),
       colourName: trim(variant.colourName),
       colourHex: trim(variant.colourHex),
-      price: Number(variant.price),
-      compareAtPrice: variant.compareAtPrice === '' || variant.compareAtPrice === null ? null : Number(variant.compareAtPrice),
+      price: variant.hasCustomPrice ? Number(variant.price) : null,
+      compareAtPrice: variant.hasCustomPrice && variant.compareAtPrice !== '' && variant.compareAtPrice !== null ? Number(variant.compareAtPrice) : null,
       images: normalizeImages(variant.images),
       sizes: normalizeSizes(variant.sizes),
       active: variant.active !== false,
@@ -73,8 +73,6 @@ function normalizeVariants(variants = []) {
 export function buildProductPayload(form, status) {
   const payload = {
     name: trim(form.name),
-    slug: form.slug ? slugify(form.slug) : undefined,
-    skuPrefix: trim(form.skuPrefix).toUpperCase() || undefined,
     mainCategory: form.mainCategory,
     subcategory: form.subcategory || null,
     productType: trim(form.productType),
@@ -85,6 +83,7 @@ export function buildProductPayload(form, status) {
     shortDescription: trim(form.shortDescription),
     regularPrice: Number(form.regularPrice),
     salePrice: form.salePrice === '' || form.salePrice === null ? null : Number(form.salePrice),
+    shippingChargeApplies: Boolean(form.shippingChargeApplies),
     variants: normalizeVariants(form.variants),
     status,
     featured: Boolean(form.featured),

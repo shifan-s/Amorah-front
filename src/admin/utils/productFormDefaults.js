@@ -42,6 +42,7 @@ export function createEmptyVariant() {
     colourHex: '',
     price: '',
     compareAtPrice: '',
+    hasCustomPrice: false,
     images: [],
     sizes: clothingSizes.map(createEmptySize),
     active: true,
@@ -52,8 +53,6 @@ export function createEmptyVariant() {
 export function createEmptyProductForm() {
   return {
     name: '',
-    slug: '',
-    skuPrefix: '',
     mainCategory: '',
     subcategory: '',
     productType: '',
@@ -65,6 +64,7 @@ export function createEmptyProductForm() {
     shortDescription: '',
     regularPrice: '',
     salePrice: '',
+    shippingChargeApplies: true,
     metaTitle: '',
     metaDescription: '',
     variants: [createEmptyVariant()],
@@ -81,8 +81,6 @@ export function productToForm(product) {
   return {
     ...form,
     name: product.name || '',
-    slug: product.slug || '',
-    skuPrefix: product.skuPrefix || '',
     mainCategory: product.mainCategory?.id || '',
     subcategory: product.subcategory?.id || '',
     productType: product.productType || '',
@@ -93,6 +91,7 @@ export function productToForm(product) {
     shortDescription: product.shortDescription || '',
     regularPrice: product.regularPrice ?? '',
     salePrice: product.salePrice ?? '',
+    shippingChargeApplies: product.shippingChargeApplies !== false,
     metaTitle: product.metaTitle || '',
     metaDescription: product.metaDescription || '',
     status: product.status || 'draft',
@@ -105,8 +104,9 @@ export function productToForm(product) {
       sku: variant.sku || '',
       colourName: variant.colourName || '',
       colourHex: variant.colourHex || '',
-      price: variant.price ?? product.currentPrice ?? product.regularPrice ?? '',
+      price: variant.price ?? '',
       compareAtPrice: variant.compareAtPrice ?? '',
+      hasCustomPrice: variant.price !== null && variant.price !== undefined,
       images: (variant.images || []).map((image, imageIndex) => ({
         key: createFormKey('image'),
         id: image.id || '',

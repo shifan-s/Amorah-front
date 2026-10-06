@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import { fabricOptions, occasionOptions, productTypeOptions, styleOptions } from '../../utils/productFormDefaults.js';
-import { slugify } from '../../utils/productPayload.js';
 
 function OptionList({ id, values }) {
   return (
@@ -23,7 +22,6 @@ function RequiredMark() {
 
 function ProductBasicInfoSection({ form, errors, updateField, addTag, removeTag, simplified = false }) {
   const fieldError = (field) => errors[field];
-  const slugPreview = form.slug ? slugify(form.slug) : slugify(form.name);
 
   const tagKeyDown = (event) => {
     if (!['Enter', ','].includes(event.key)) {
@@ -48,16 +46,6 @@ function ProductBasicInfoSection({ form, errors, updateField, addTag, removeTag,
       </div>
       {!simplified ? (
         <>
-          <div>
-            <label htmlFor="product-slug">Product Page Link</label>
-            <input id="product-slug" value={form.slug} onChange={(event) => updateField('slug', slugify(event.target.value))} placeholder={slugPreview} />
-            <p className="mt-2 text-xs text-[#6F6259]">Preview: {slugPreview || 'product-name'}</p>
-            {fieldError('slug') ? <p className="mt-2 text-sm text-amorah-error">{fieldError('slug')}</p> : null}
-          </div>
-          <div>
-            <label htmlFor="sku-prefix">SKU Prefix (Optional)</label>
-            <input id="sku-prefix" value={form.skuPrefix} onChange={(event) => updateField('skuPrefix', event.target.value.toUpperCase())} />
-          </div>
           <div>
             <label htmlFor="product-type">Product Type</label>
             <input id="product-type" list="product-type-options" value={form.productType} onChange={(event) => updateField('productType', event.target.value)} />

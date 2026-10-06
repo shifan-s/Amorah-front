@@ -66,6 +66,7 @@ function createCartItem(product, selectedSize, selectedColour, quantity, selecte
     image: primaryImage,
     regularPrice: product.regularPrice,
     salePrice: product.salePrice,
+    shippingChargeApplies: product.shippingChargeApplies !== false,
     currentPrice: unitPrice,
     unitPrice,
     selectedSize,

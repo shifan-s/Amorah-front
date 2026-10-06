@@ -40,6 +40,13 @@ function ProductPricingSection({ form, errors, updateField }) {
         <p className="mt-3 text-sm text-[#302925]">Original Price: {hasRegular ? formatINR(regular) : '-'}</p>
         <p className="mt-1 text-sm font-semibold text-[#672F3B]">Discount: {discount ? `${discount}%` : '-'}</p>
       </div>
+      <div className="border border-[#DED2C5] bg-[#FAF6EE] p-4 md:col-span-3">
+        <label className="mb-0 flex items-center gap-3">
+          <input type="checkbox" checked={form.shippingChargeApplies} onChange={(event) => updateField('shippingChargeApplies', event.target.checked)} />
+          Charge shipping for this product
+        </label>
+        <p className="mt-2 text-xs text-[#6F6259]">When unchecked, this product ships free. The standard checkout shipping fee applies only when the cart includes at least one product with shipping enabled.</p>
+      </div>
     </section>
   );
 }

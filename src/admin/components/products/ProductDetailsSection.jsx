@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import { fabricOptions, occasionOptions, productTypeOptions, styleOptions } from '../../utils/productFormDefaults.js';
-import { slugify } from '../../utils/productPayload.js';
 
 function OptionList({ id, values }) {
   return (
@@ -18,8 +17,6 @@ OptionList.propTypes = {
 };
 
 function ProductDetailsSection({ form, errors = {}, updateField, includeDiscoveryFields = false, includeMarketingFlags = false }) {
-  const slugPreview = form.slug ? slugify(form.slug) : slugify(form.name);
-
   return (
     <section className="grid gap-5 border border-[#DED2C5] bg-[#FFFDF8] p-5 md:grid-cols-2">
       <div className="md:col-span-2">
@@ -28,17 +25,6 @@ function ProductDetailsSection({ form, errors = {}, updateField, includeDiscover
       </div>
       {includeDiscoveryFields ? (
         <>
-          <div>
-            <label htmlFor="product-slug">Product Page Link</label>
-            <input id="product-slug" value={form.slug} onChange={(event) => updateField('slug', slugify(event.target.value))} placeholder={slugPreview} />
-            <p className="mt-2 text-xs text-[#6F6259]">This controls the readable part of the product page URL.</p>
-            {errors.slug ? <p className="mt-2 text-sm text-amorah-error">{errors.slug}</p> : null}
-          </div>
-          <div>
-            <label htmlFor="sku-prefix">SKU Prefix (Optional)</label>
-            <input id="sku-prefix" value={form.skuPrefix} onChange={(event) => updateField('skuPrefix', event.target.value.toUpperCase())} />
-            <p className="mt-2 text-xs text-[#6F6259]">Optional internal code used before product option SKUs.</p>
-          </div>
           <div>
             <label htmlFor="product-type">Product Type</label>
             <input id="product-type" list="product-type-options" value={form.productType} onChange={(event) => updateField('productType', event.target.value)} />

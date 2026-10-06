@@ -63,12 +63,6 @@ function ProductVariantCard({
         <div className="grid gap-5 p-4">
           <div className="grid gap-4 md:grid-cols-4">
             <div>
-              <label htmlFor={`variant-sku-${variantIndex}`}>SKU (Optional)</label>
-              <input id={`variant-sku-${variantIndex}`} value={variant.sku} onChange={(event) => onUpdate(variantIndex, 'sku', event.target.value.toUpperCase())} />
-              <p className="mt-2 text-xs text-[#6F6259]">Leave blank to generate a unique SKU when saved.</p>
-              {errors[`variants.${variantIndex}.sku`] ? <p className="mt-2 text-sm text-amorah-error">{errors[`variants.${variantIndex}.sku`]}</p> : null}
-            </div>
-            <div>
               <label htmlFor={`variant-colour-${variantIndex}`}>Colour Name <span className="text-[#672F3B]" aria-hidden="true">*</span></label>
               <input id={`variant-colour-${variantIndex}`} value={variant.colourName} onChange={(event) => onUpdate(variantIndex, 'colourName', event.target.value)} />
               <p className="mt-2 text-xs text-[#6F6259]">Use the colour name customers will choose, such as Maroon or White.</p>
@@ -85,17 +79,26 @@ function ProductVariantCard({
             </label>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label htmlFor={`variant-price-${variantIndex}`}>Price (INR) <span className="text-[#672F3B]" aria-hidden="true">*</span></label>
-              <input id={`variant-price-${variantIndex}`} type="number" min="0" step="1" value={variant.price} onChange={(event) => onUpdate(variantIndex, 'price', event.target.value)} />
-              {errors[`variants.${variantIndex}.price`] ? <p className="mt-2 text-sm text-amorah-error">{errors[`variants.${variantIndex}.price`]}</p> : null}
-            </div>
-            <div>
-              <label htmlFor={`variant-compare-price-${variantIndex}`}>Compare-at Price (INR)</label>
-              <input id={`variant-compare-price-${variantIndex}`} type="number" min="0" step="1" value={variant.compareAtPrice} onChange={(event) => onUpdate(variantIndex, 'compareAtPrice', event.target.value)} />
-              {errors[`variants.${variantIndex}.compareAtPrice`] ? <p className="mt-2 text-sm text-amorah-error">{errors[`variants.${variantIndex}.compareAtPrice`]}</p> : null}
-            </div>
+          <div className="border border-[#DED2C5] bg-[#FAF6EE] p-4">
+            <label className="mb-0 flex items-center gap-3">
+              <input type="checkbox" checked={variant.hasCustomPrice} onChange={(event) => onUpdate(variantIndex, 'hasCustomPrice', event.target.checked)} />
+              Set a different price for this colour
+            </label>
+            <p className="mt-2 text-xs text-[#6F6259]">When unchecked, this colour uses the product selling price above.</p>
+            {variant.hasCustomPrice ? (
+              <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label htmlFor={`variant-price-${variantIndex}`}>Colour Selling Price (INR) <span className="text-[#672F3B]" aria-hidden="true">*</span></label>
+                  <input id={`variant-price-${variantIndex}`} type="number" min="0" step="1" value={variant.price} onChange={(event) => onUpdate(variantIndex, 'price', event.target.value)} />
+                  {errors[`variants.${variantIndex}.price`] ? <p className="mt-2 text-sm text-amorah-error">{errors[`variants.${variantIndex}.price`]}</p> : null}
+                </div>
+                <div>
+                  <label htmlFor={`variant-compare-price-${variantIndex}`}>Colour Original Price (INR)</label>
+                  <input id={`variant-compare-price-${variantIndex}`} type="number" min="0" step="1" value={variant.compareAtPrice} onChange={(event) => onUpdate(variantIndex, 'compareAtPrice', event.target.value)} />
+                  {errors[`variants.${variantIndex}.compareAtPrice`] ? <p className="mt-2 text-sm text-amorah-error">{errors[`variants.${variantIndex}.compareAtPrice`]}</p> : null}
+                </div>
+              </div>
+            ) : null}
           </div>
 
           <div>
