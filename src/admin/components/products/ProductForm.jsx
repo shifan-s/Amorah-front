@@ -28,7 +28,7 @@ async function deletePublicIds(publicIds, warningMessage) {
   }
 }
 
-function ProductForm({ mode, initialForm, categories, saving, onSubmit, onArchive }) {
+function ProductForm({ mode, initialForm, categories, saving, onSubmit, onArchive, onCategoryCreated }) {
   const navigate = useNavigate();
   const {
     form,
@@ -206,7 +206,14 @@ function ProductForm({ mode, initialForm, categories, saving, onSubmit, onArchiv
           </div>
         ) : null}
         <ProductBasicInfoSection form={form} errors={errors} updateField={updateField} addTag={addTag} removeTag={removeTag} />
-        <ProductCategorySection form={form} errors={errors} mainCategories={mainCategories} subcategories={subcategories} updateField={updateField} />
+        <ProductCategorySection
+          form={form}
+          errors={errors}
+          mainCategories={mainCategories}
+          subcategories={subcategories}
+          updateField={updateField}
+          onCategoryCreated={onCategoryCreated}
+        />
         <ProductPricingSection form={form} errors={errors} updateField={updateField} />
         <ProductDetailsSection form={form} updateField={updateField} />
         <ProductVariantManager
@@ -242,6 +249,7 @@ ProductForm.propTypes = {
   saving: PropTypes.bool,
   onSubmit: PropTypes.func.isRequired,
   onArchive: PropTypes.func,
+  onCategoryCreated: PropTypes.func.isRequired,
 };
 
 export default ProductForm;

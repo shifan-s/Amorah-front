@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
+import MainCategoryQuickAdd from './MainCategoryQuickAdd.jsx';
 
-function ProductCategorySection({ form, errors, mainCategories, subcategories, updateField }) {
+function ProductCategorySection({ form, errors, mainCategories, subcategories, updateField, onCategoryCreated }) {
   return (
     <section className="grid gap-5 border border-[#DED2C5] bg-[#FFFDF8] p-5 md:grid-cols-2">
       <div className="md:col-span-2">
@@ -18,6 +19,11 @@ function ProductCategorySection({ form, errors, mainCategories, subcategories, u
           ))}
         </select>
         {errors.mainCategory ? <p className="mt-2 text-sm text-amorah-error">{errors.mainCategory}</p> : null}
+        <MainCategoryQuickAdd
+          categories={mainCategories}
+          onCategoryCreated={onCategoryCreated}
+          onSelectCategory={(categoryId) => updateField('mainCategory', categoryId)}
+        />
       </div>
       <div>
         <label htmlFor="subcategory">Subcategory</label>
@@ -40,6 +46,7 @@ ProductCategorySection.propTypes = {
   mainCategories: PropTypes.arrayOf(PropTypes.object).isRequired,
   subcategories: PropTypes.arrayOf(PropTypes.object).isRequired,
   updateField: PropTypes.func.isRequired,
+  onCategoryCreated: PropTypes.func.isRequired,
 };
 
 export default ProductCategorySection;

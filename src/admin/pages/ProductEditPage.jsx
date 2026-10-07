@@ -54,6 +54,12 @@ function ProductEditPage() {
     }
   };
 
+  const addCategory = (category) => {
+    setCategories((current) => (
+      current.some((item) => item.id === category.id) ? current : [...current, category]
+    ));
+  };
+
   const archive = async () => {
     setSaving(true);
     try {
@@ -79,7 +85,7 @@ function ProductEditPage() {
   return (
     <section className="space-y-6">
       <AdminPageHeader eyebrow="Product setup" title="Edit Product" description="Update the product information, images, price, stock, and available options." />
-      <ProductForm mode="edit" initialForm={form} categories={categories} saving={saving} onSubmit={submit} onArchive={() => setConfirmArchive(true)} />
+      <ProductForm mode="edit" initialForm={form} categories={categories} saving={saving} onSubmit={submit} onArchive={() => setConfirmArchive(true)} onCategoryCreated={addCategory} />
       <ConfirmDialog
         open={confirmArchive}
         title="Archive product?"

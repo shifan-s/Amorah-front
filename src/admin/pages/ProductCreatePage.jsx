@@ -31,10 +31,16 @@ function ProductCreatePage() {
     }
   };
 
+  const addCategory = (category) => {
+    setCategories((current) => (
+      current.some((item) => item.id === category.id) ? current : [...current, category]
+    ));
+  };
+
   return (
     <section className="space-y-6">
       <AdminPageHeader eyebrow="Product setup" title="Create Product" description="Build product details, colour variants, images and stock." />
-      <ProductForm mode="create" categories={categories} saving={saving} onSubmit={submit} />
+      <ProductForm mode="create" categories={categories} saving={saving} onSubmit={submit} onCategoryCreated={addCategory} />
     </section>
   );
 }
