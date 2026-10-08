@@ -88,8 +88,9 @@ function ProductVariantCard({
             {variant.hasCustomPrice ? (
               <div className="mt-4 grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label htmlFor={`variant-price-${variantIndex}`}>Colour Selling Price (INR) <span className="text-[#672F3B]" aria-hidden="true">*</span></label>
+                  <label htmlFor={`variant-price-${variantIndex}`}>Colour Selling Price (INR) <span className="text-xs font-normal text-[#6F6259]">Optional</span></label>
                   <input id={`variant-price-${variantIndex}`} type="number" min="0" step="1" value={variant.price} onChange={(event) => onUpdate(variantIndex, 'price', event.target.value)} />
+                  <p className="mt-2 text-xs text-[#6F6259]">Leave blank to use the product selling price above.</p>
                   {errors[`variants.${variantIndex}.price`] ? <p className="mt-2 text-sm text-amorah-error">{errors[`variants.${variantIndex}.price`]}</p> : null}
                 </div>
                 <div>
