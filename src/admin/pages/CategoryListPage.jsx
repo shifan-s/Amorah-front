@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { FiEdit2, FiPlus, FiTrash2 } from 'react-icons/fi';
+import { FiEdit2, FiGitMerge, FiPlus, FiTrash2 } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import AdminEmptyState from '../components/AdminEmptyState.jsx';
@@ -7,7 +7,7 @@ import AdminPageHeader from '../components/AdminPageHeader.jsx';
 import AdminTable from '../components/AdminTable.jsx';
 import ConfirmDialog from '../components/ConfirmDialog.jsx';
 import StatusBadge from '../components/StatusBadge.jsx';
-import { deleteCategory, getAdminCategories, updateCategory } from '../services/adminCategoryService.js';
+import { deleteCategory, getAdminCategories, mergeCategories, updateCategory } from '../services/adminCategoryService.js';
 
 const columns = ['Image', 'Name', 'Type', 'Parent', 'Show on Home', 'Show in Navigation', 'Featured', 'Display Order', 'Status', 'Actions'];
 
@@ -24,6 +24,10 @@ function CategoryListPage() {
   const [error, setError] = useState('');
   const [confirmCategory, setConfirmCategory] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [categoryToMerge, setCategoryToMerge] = useState(null);
+  const [mergeTargets, setMergeTargets] = useState([]);
+  const [mergeTargetId, setMergeTargetId] = useState('');
+  const [merging, setMerging] = useState(false);
 
   const loadCategories = useCallback(async () => {
     setLoading(true);
@@ -78,6 +82,47 @@ function CategoryListPage() {
       toast.error('Unable to deactivate category.');
     } finally {
       setDeleting(false);
+    }
+  };
+
+  const openMergeDialog = async (category) => {
+    try {
+      const result = await getAdminCategories({ status: 'active' });
+      const targets = result.categories.filter((target) => (
+        target.id !== category.id &&
+        target.level === category.level &&
+        (category.level === 0 || target.parent?.id === category.parent?.id)
+      ));
+
+      if (!targets.length) {
+        toast.error('No compatible active destination categories are available.');
+        return;
+      }
+
+      setCategoryToMerge(category);
+      setMergeTargets(targets);
+      setMergeTargetId(targets[0].id);
+    } catch (requestError) {
+      toast.error(requestError.response?.data?.message || 'Unable to load destination categories.');
+    }
+  };
+
+  const confirmMerge = async () => {
+    if (!categoryToMerge || !mergeTargetId) return;
+
+    setMerging(true);
+    try {
+      const result = await mergeCategories(categoryToMerge.id, mergeTargetId);
+      const productCount = result.movedProducts || 0;
+      toast.success(`Moved ${productCount} product${productCount === 1 ? '' : 's'} into ${mergeTargets.find((category) => category.id === mergeTargetId)?.name || 'the selected category'}.`);
+      setCategoryToMerge(null);
+      setMergeTargets([]);
+      setMergeTargetId('');
+      loadCategories();
+    } catch (requestError) {
+      toast.error(requestError.response?.data?.message || 'Unable to merge categories.');
+    } finally {
+      setMerging(false);
     }
   };
 
@@ -190,6 +235,14 @@ function CategoryListPage() {
                   </button>
                   <button
                     type="button"
+                    onClick={() => openMergeDialog(category)}
+                    className="inline-flex min-h-10 items-center gap-2 border border-[#DED2C5] px-3 text-xs font-semibold text-[#302925] outline-none hover:bg-[#F3ECE3] focus-visible:ring-2 focus-visible:ring-[#672F3B]"
+                  >
+                    <FiGitMerge aria-hidden="true" />
+                    Merge
+                  </button>
+                  <button
+                    type="button"
                     onClick={() => setConfirmCategory(category)}
                     className="grid h-10 w-10 place-items-center border border-[#DED2C5] text-[#672F3B] outline-none hover:bg-[#F3ECE3] focus-visible:ring-2 focus-visible:ring-[#672F3B]"
                     aria-label={`Deactivate ${category.name}`}
@@ -216,6 +269,47 @@ function CategoryListPage() {
         onCancel={() => setConfirmCategory(null)}
         onConfirm={confirmDelete}
       />
+
+      {categoryToMerge ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#302925]/45 px-4" role="dialog" aria-modal="true" aria-labelledby="merge-category-title">
+          <div className="w-full max-w-md border border-[#DED2C5] bg-[#FFFDF8] p-6 shadow-xl">
+            <h2 id="merge-category-title" className="text-xl font-semibold text-[#302925]">Merge category</h2>
+            <p className="mt-3 text-sm leading-6 text-[#6F6259]">
+              Products and subcategories under <strong>{categoryToMerge.name}</strong> will move to the selected category. The old category will be deactivated, not deleted.
+            </p>
+            <label htmlFor="merge-category-target" className="mt-5 block">Move into</label>
+            <select
+              id="merge-category-target"
+              className="mt-2 w-full"
+              value={mergeTargetId}
+              onChange={(event) => setMergeTargetId(event.target.value)}
+              disabled={merging}
+            >
+              {mergeTargets.map((category) => (
+                <option key={category.id} value={category.id}>{category.name}</option>
+              ))}
+            </select>
+            <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+              <button
+                type="button"
+                onClick={() => setCategoryToMerge(null)}
+                disabled={merging}
+                className="min-h-11 border border-[#DED2C5] px-4 text-sm font-semibold text-[#302925] outline-none hover:bg-[#F3ECE3] focus-visible:ring-2 focus-visible:ring-[#672F3B]"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmMerge}
+                disabled={merging || !mergeTargetId}
+                className="min-h-11 bg-[#672F3B] px-4 text-sm font-semibold text-white outline-none hover:bg-[#302925] disabled:cursor-not-allowed disabled:opacity-60 focus-visible:ring-2 focus-visible:ring-[#672F3B]"
+              >
+                {merging ? 'Merging...' : 'Move and deactivate'}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }

@@ -169,6 +169,14 @@ function ProductForm({ mode, initialForm, categories, saving, onSubmit, onArchiv
           </div>
         ) : null}
         <ProductBasicInfoSection form={form} errors={errors} updateField={updateField} addTag={addTag} removeTag={removeTag} simplified />
+        <ProductCategorySection
+          form={form}
+          errors={errors}
+          mainCategories={mainCategories}
+          subcategories={subcategories}
+          updateField={updateField}
+          onCategoryCreated={onCategoryCreated}
+        />
         <ProductVariantManager
           form={form}
           errors={errors}

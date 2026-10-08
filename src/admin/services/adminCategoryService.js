@@ -48,3 +48,8 @@ export async function deleteCategory(categoryId) {
   const response = await api.delete(`/admin/categories/${categoryId}`);
   return unwrapCategory(response);
 }
+
+export async function mergeCategories(categoryId, targetCategoryId) {
+  const response = await api.post(`/admin/categories/${categoryId}/merge`, { targetCategoryId });
+  return response.data?.data;
+}
