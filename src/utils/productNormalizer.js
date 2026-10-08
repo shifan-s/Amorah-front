@@ -67,6 +67,8 @@ export function normalizeProduct(product = {}) {
     style: product.style || '',
     fabric: product.fabric || '',
     occasion: product.occasion || '',
+    widthInches: product.widthInches === null || product.widthInches === undefined ? null : Number(product.widthInches),
+    lengthInches: product.lengthInches === null || product.lengthInches === undefined ? null : Number(product.lengthInches),
     tags: product.tags || [],
     shortDescription: product.shortDescription || '',
     regularPrice,

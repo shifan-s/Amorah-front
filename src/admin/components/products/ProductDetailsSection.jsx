@@ -21,7 +21,7 @@ function ProductDetailsSection({ form, errors = {}, updateField, includeDiscover
     <section className="grid gap-5 border border-[#DED2C5] bg-[#FFFDF8] p-5 md:grid-cols-2">
       <div className="md:col-span-2">
         <h2 className="text-xl font-semibold text-[#302925]">Additional Information</h2>
-        <p className="mt-1 text-sm text-[#6F6259]">Use these optional details to improve product discovery and display.</p>
+        <p className="mt-1 text-sm text-[#6F6259]">Add optional dress measurements; shoppers see them only when provided.</p>
       </div>
       {includeDiscoveryFields ? (
         <>
@@ -47,6 +47,36 @@ function ProductDetailsSection({ form, errors = {}, updateField, includeDiscover
           </div>
         </>
       ) : null}
+      <div>
+        <label htmlFor="dress-width-inches">Dress Width (inches) <span className="font-normal text-[#6F6259]">Optional</span></label>
+        <input
+          id="dress-width-inches"
+          type="number"
+          min="0.1"
+          max="500"
+          step="0.1"
+          value={form.widthInches}
+          onChange={(event) => updateField('widthInches', event.target.value)}
+          aria-invalid={Boolean(errors.widthInches)}
+          aria-describedby={errors.widthInches ? 'dress-width-inches-error' : undefined}
+        />
+        {errors.widthInches ? <p id="dress-width-inches-error" className="mt-2 text-sm text-amorah-error">{errors.widthInches}</p> : null}
+      </div>
+      <div>
+        <label htmlFor="dress-length-inches">Dress Length (inches) <span className="font-normal text-[#6F6259]">Optional</span></label>
+        <input
+          id="dress-length-inches"
+          type="number"
+          min="0.1"
+          max="500"
+          step="0.1"
+          value={form.lengthInches}
+          onChange={(event) => updateField('lengthInches', event.target.value)}
+          aria-invalid={Boolean(errors.lengthInches)}
+          aria-describedby={errors.lengthInches ? 'dress-length-inches-error' : undefined}
+        />
+        {errors.lengthInches ? <p id="dress-length-inches-error" className="mt-2 text-sm text-amorah-error">{errors.lengthInches}</p> : null}
+      </div>
       <div>
         <label htmlFor="meta-title">Search Title</label>
         <input id="meta-title" value={form.metaTitle} onChange={(event) => updateField('metaTitle', event.target.value)} />

@@ -79,6 +79,8 @@ export function buildProductPayload(form, status) {
     style: trim(form.style),
     fabric: trim(form.fabric),
     occasion: trim(form.occasion),
+    widthInches: form.widthInches === '' || form.widthInches === null ? null : Number(form.widthInches),
+    lengthInches: form.lengthInches === '' || form.lengthInches === null ? null : Number(form.lengthInches),
     tags: normalizeTags(form.tags),
     shortDescription: trim(form.shortDescription),
     regularPrice: Number(form.regularPrice),

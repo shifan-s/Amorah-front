@@ -407,6 +407,25 @@ function ProductDetailsPage() {
               {product.shortDescription ? (
                 <p className="mt-5 text-base leading-8 text-amorah-brown">{product.shortDescription}</p>
               ) : null}
+              {product.widthInches !== null || product.lengthInches !== null ? (
+                <section className="mt-6 border border-amorah-border bg-amorah-ivory p-4" aria-labelledby="dress-measurements-heading">
+                  <h2 id="dress-measurements-heading" className="text-sm font-semibold text-amorah-black">Dress Measurements</h2>
+                  <dl className="mt-3 grid grid-cols-2 gap-4 text-sm">
+                    {product.widthInches !== null ? (
+                      <div>
+                        <dt className="text-amorah-brown">Width</dt>
+                        <dd className="mt-1 font-semibold text-amorah-black">{product.widthInches} in</dd>
+                      </div>
+                    ) : null}
+                    {product.lengthInches !== null ? (
+                      <div>
+                        <dt className="text-amorah-brown">Length</dt>
+                        <dd className="mt-1 font-semibold text-amorah-black">{product.lengthInches} in</dd>
+                      </div>
+                    ) : null}
+                  </dl>
+                </section>
+              ) : null}
 
               <div className="mt-7 space-y-6">
                 <div className="space-y-1 text-sm text-amorah-brown">

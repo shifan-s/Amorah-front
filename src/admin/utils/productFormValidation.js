@@ -114,6 +114,13 @@ export function validateProductForm(form, submitStatus = form.status) {
     setError(errors, 'shortDescription', 'Short description is required.');
   }
 
+  ['widthInches', 'lengthInches'].forEach((field) => {
+    const measurement = numberValue(form[field]);
+    if (measurement !== null && (!Number.isFinite(measurement) || measurement < 0.1 || measurement > 500)) {
+      setError(errors, field, 'Enter a measurement between 0.1 and 500 inches, or leave it blank.');
+    }
+  });
+
   const regularPrice = numberValue(form.regularPrice);
   const salePrice = numberValue(form.salePrice);
 

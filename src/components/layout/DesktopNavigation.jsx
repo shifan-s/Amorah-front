@@ -6,39 +6,20 @@ import { selectNavigationCategories } from '../../store/slices/categorySlice.js'
 const staticLinks = [
   { label: 'Home', to: '/' },
   { label: 'Shop', to: '/shop' },
-  { label: 'New Arrivals', to: '/shop?sort=newest' },
   { label: 'About', to: '/about' },
   { label: 'Contact Us', to: '/contact' },
 ];
 
-function isCottonCategory(category) {
-  const name = String(category?.name || '').trim().toLowerCase();
-  const slug = String(category?.slug || '').trim().toLowerCase();
-
-  return name === 'cotton' || slug === 'cotton';
-}
-
 export function useCustomerNavigationLinks() {
   const categories = useSelector(selectNavigationCategories);
 
-  const categoryLinks = categories
-    .filter((category) => !isCottonCategory(category))
-    .map((category) => ({
-      label: category.name,
-      to: `/shop/${category.slug}`,
-      children: category.children || [],
-    }));
+  const categoryLinks = categories.map((category) => ({
+    label: category.name,
+    to: `/shop/${category.slug}`,
+    children: category.children || [],
+  }));
 
-  return {
-    links: [
-      staticLinks[0],
-      staticLinks[1],
-      staticLinks[2],
-      ...categoryLinks,
-      staticLinks[3],
-      staticLinks[4],
-    ],
-  };
+  return { links: staticLinks, categoryLinks };
 }
 
 function isNavigationActive(link, location) {
@@ -203,47 +184,19 @@ function MoreNavigation({ links }) {
 }
 
 function DesktopNavigation({ className = '' }) {
-  const { links } = useCustomerNavigationLinks();
-
-  const homeLink = links.find((link) => link.to === '/');
-  const shopLink = links.find((link) => link.to === '/shop');
-  const newArrivalsLink = links.find(
-    (link) => link.to === '/shop?sort=newest',
-  );
-  const aboutLink = links.find((link) => link.to === '/about');
-  const contactLink = links.find((link) => link.to === '/contact');
-
-  const categoryLinks = links.filter(
-    (link) =>
-      link.to !== '/' &&
-      link.to !== '/shop' &&
-      link.to !== '/shop?sort=newest' &&
-      link.to !== '/about' &&
-      link.to !== '/contact',
-  );
-
-  const visibleLinks = [
-    homeLink,
-    shopLink,
-    newArrivalsLink,
-    ...categoryLinks.slice(0, 2),
-    aboutLink,
-    contactLink,
-  ].filter(Boolean);
-
-  const overflowLinks = categoryLinks.slice(2);
+  const { links, categoryLinks } = useCustomerNavigationLinks();
 
   return (
     <nav
       className={`hidden min-w-0 items-center gap-4 lg:flex xl:gap-6 ${className}`}
       aria-label="Primary navigation"
     >
-      {visibleLinks.map((link) => (
+      {links.map((link) => (
         <NavigationLink key={link.to} link={link} />
       ))}
 
-      {overflowLinks.length > 0 ? (
-        <MoreNavigation links={overflowLinks} />
+      {categoryLinks.length > 0 ? (
+        <MoreNavigation links={categoryLinks} />
       ) : null}
     </nav>
   );

@@ -215,7 +215,7 @@ function ProductForm({ mode, initialForm, categories, saving, onSubmit, onArchiv
           onCategoryCreated={onCategoryCreated}
         />
         <ProductPricingSection form={form} errors={errors} updateField={updateField} />
-        <ProductDetailsSection form={form} updateField={updateField} />
+        <ProductDetailsSection form={form} errors={errors} updateField={updateField} />
         <ProductVariantManager
           form={form}
           errors={errors}

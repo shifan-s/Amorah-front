@@ -17,8 +17,9 @@ import { loadCartState } from '../../utils/storage.js';
 
 function MobileMenu({ open, onClose }) {
   const menuRef = useRef(null);
-  const { links: navigationLinks } = useCustomerNavigationLinks();
+  const { links: navigationLinks, categoryLinks } = useCustomerNavigationLinks();
   const [openCategory, setOpenCategory] = useState('');
+  const [moreOpen, setMoreOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const auth = useSelector(selectAuth);
   const dispatch = useDispatch();
@@ -100,70 +101,87 @@ function MobileMenu({ open, onClose }) {
           <ul className="space-y-1">
             {navigationLinks.map((link) => (
               <li key={link.to}>
-                {link.children?.length ? (
-                  <div>
-                    <div className="flex items-center justify-between gap-2">
-                      <NavLink
-                        to={link.to}
-                        className={({ isActive }) =>
-                          `amorah-focus block flex-1 px-2 py-3 font-heading text-2xl font-semibold ${
-                            isActive ? 'text-amorah-maroon' : 'text-amorah-black'
-                          }`
-                        }
-                        onClick={onClose}
-                      >
-                        {link.label}
-                      </NavLink>
-                      <button
-                        type="button"
-                        className="amorah-focus flex h-11 w-11 items-center justify-center text-amorah-brown"
-                        aria-label={`Toggle ${link.label} subcategories`}
-                        aria-expanded={openCategory === link.to}
-                        onClick={() => setOpenCategory((current) => (current === link.to ? '' : link.to))}
-                      >
-                        <FiChevronDown
-                          aria-hidden="true"
-                          className={`transition ${openCategory === link.to ? 'rotate-180' : ''}`}
-                        />
-                      </button>
-                    </div>
-                    {openCategory === link.to ? (
-                      <div className="ml-4 border-l border-amorah-border pl-4">
-                        <Link
-                          to={link.to}
-                          className="amorah-focus block py-2 text-sm font-semibold text-amorah-brown hover:text-amorah-maroon"
-                          onClick={onClose}
-                        >
-                          View All
-                        </Link>
-                        {link.children.map((subcategory) => (
-                          <Link
-                            key={subcategory.id || subcategory.slug}
-                            to={`${link.to}?subcategory=${subcategory.slug}`}
-                            className="amorah-focus block py-2 text-sm font-semibold text-amorah-brown hover:text-amorah-maroon"
-                            onClick={onClose}
-                          >
-                            {subcategory.name}
-                          </Link>
-                        ))}
-                      </div>
-                    ) : null}
-                  </div>
-                ) : (
-                  <NavLink
-                    to={link.to}
-                    className={({ isActive }) =>
-                      `amorah-focus block px-2 py-3 font-heading text-2xl font-semibold ${
-                        isActive ? 'text-amorah-maroon' : 'text-amorah-black'
-                      }`
-                    }
-                    onClick={onClose}
-                  >
-                    {link.label}
-                  </NavLink>
-                )}
+                <NavLink
+                  to={link.to}
+                  className={({ isActive }) =>
+                    `amorah-focus block px-2 py-3 font-heading text-2xl font-semibold ${
+                      isActive ? 'text-amorah-maroon' : 'text-amorah-black'
+                    }`
+                  }
+                  onClick={onClose}
+                >
+                  {link.label}
+                </NavLink>
               </li>
             ))}
+            {categoryLinks.length > 0 ? (
+              <li>
+                <button
+                  type="button"
+                  className={`amorah-focus flex w-full items-center justify-between px-2 py-3 text-left font-heading text-2xl font-semibold ${
+                    moreOpen ? 'text-amorah-maroon' : 'text-amorah-black'
+                  }`}
+                  aria-expanded={moreOpen}
+                  aria-controls="mobile-more-categories"
+                  onClick={() => setMoreOpen((current) => !current)}
+                >
+                  <span>More</span>
+                  <FiChevronDown
+                    aria-hidden="true"
+                    className={`text-base transition ${moreOpen ? 'rotate-180' : ''}`}
+                  />
+                </button>
+                {moreOpen ? (
+                  <div id="mobile-more-categories" className="ml-4 border-l border-amorah-border pl-4">
+                    {categoryLinks.map((link) => (
+                      <div key={link.to}>
+                        <div className="flex items-center justify-between gap-2">
+                          <NavLink
+                            to={link.to}
+                            className={({ isActive }) =>
+                              `amorah-focus block flex-1 py-2 text-sm font-semibold ${
+                                isActive ? 'text-amorah-maroon' : 'text-amorah-brown'
+                              }`
+                            }
+                            onClick={onClose}
+                          >
+                            {link.label}
+                          </NavLink>
+                          {link.children?.length ? (
+                            <button
+                              type="button"
+                              className="amorah-focus flex h-10 w-10 items-center justify-center text-amorah-brown"
+                              aria-label={`Toggle ${link.label} subcategories`}
+                              aria-expanded={openCategory === link.to}
+                              onClick={() => setOpenCategory((current) => (current === link.to ? '' : link.to))}
+                            >
+                              <FiChevronDown
+                                aria-hidden="true"
+                                className={`transition ${openCategory === link.to ? 'rotate-180' : ''}`}
+                              />
+                            </button>
+                          ) : null}
+                        </div>
+                        {link.children?.length && openCategory === link.to ? (
+                          <div className="ml-3 border-l border-amorah-border pl-3">
+                            {link.children.map((subcategory) => (
+                              <Link
+                                key={subcategory.id || subcategory.slug}
+                                to={`${link.to}?subcategory=${subcategory.slug}`}
+                                className="amorah-focus block py-2 text-sm font-semibold text-amorah-brown hover:text-amorah-maroon"
+                                onClick={onClose}
+                              >
+                                {subcategory.name}
+                              </Link>
+                            ))}
+                          </div>
+                        ) : null}
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+              </li>
+            ) : null}
           </ul>
         </nav>
 
